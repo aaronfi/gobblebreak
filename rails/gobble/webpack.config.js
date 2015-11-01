@@ -7,16 +7,19 @@ closureCompiler.options['language_in'] = 'ECMASCRIPT6_STRICT';  // override the 
 closureCompiler.options['compilation_level'] = 'SIMPLE';   // 2015.09.01 the 'ADVANCED' setting was causing my unit tests to break
 // closureCompiler.options['language_out'] = 'ES5';  // the default setting is 'ES5'
 
+
+// TODO 2015.11.01 if you're going to keep using webpack, try to get it to integrate nicely into Rails.  Maybe have all outbound js route through Google Closure
+// via Rails' Sprockets?
 module.exports = {
     context: __dirname,
     entry: {
         gobble: './bundle.js',
-        'gobble-tests': './bundle-tests.js'
+        // 'gobble-tests': './bundle-tests.js'
     },
     output: {
         path: path.join(__dirname, '../', 'app', 'assets', 'javascripts'),
         // path: path.join(__dirname, '/build'),       
-        filename: "[name]-bundle.js"
+        filename: "[name].js"
     },
 
     // TODO do I really need to be piping my builds through Babel (the es6->es5 transpiler) and then Closure Compiler, and then UglifyJS?

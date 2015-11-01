@@ -1,26 +1,28 @@
 'use strict';
 
+// TODO this class is currently deprecated and isn't being used, for perf reasons.
+// You'll want to keep it around for when you need to (manually) regenerate your Dictionary.WORDS_JSON struct blob...
 class Node {
     constructor(isWord = false) {
-        this.isWord = isWord;
-        this.children = {};
+        this.i = isWord ? 1 : 0;
+        this.c = {};  // children;  using "c" for minimalism in JSON string
     }
 
     add(word) {
         let curr = this;
         word.split('').forEach((c, i) => {
-            let found = curr.children[c];
+            let found = curr.c[c];
             let isWordEnd = (i === word.length - 1);
 
             if (found) {
                 if (isWordEnd) {
-                    curr.isWord = true;
+                    curr.i = 1;
                 } 
             } else {
-                curr.children[c] = new Node(isWordEnd);
+                curr.c[c] = new Node(isWordEnd);
             }
 
-            curr = curr.children[c];
+            curr = curr.c[c];
         });
     }
 
@@ -33,16 +35,16 @@ class Node {
         let bail = false;
         candidate.split('').forEach(c => {
 
-            let found = curr.children[c];
+            let found = curr.c[c];
             if (found) {
-                curr = curr.children[c];
+                curr = curr.c[c];
             } else {
                 bail = true;
             }
         });
 
         if (bail) return false;
-        return curr.isWord;
+        return curr.i;
     }
 
     isWordPrefix(candidate) {
@@ -54,16 +56,16 @@ class Node {
         let bail = false;
 
         candidate.split('').forEach((c, i) => {
-            let found = curr.children[c];
+            let found = curr.c[c];
             if (found) {
-                curr = curr.children[c];
+                curr = curr.c[c];
             } else {
                 bail = true;
             }
         });
 
         if (bail) return false;
-        return curr.isWord || Object.keys(curr.children).length > 0;
+        return curr.i || Object.keys(curr.c).length > 0;
     }
 
     toString() {
