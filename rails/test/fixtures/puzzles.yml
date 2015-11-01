@@ -1,0 +1,41 @@
+# == Schema Information
+#
+# Table name: puzzles
+#
+#  id               :integer          not null, primary key
+#  obsfucated_id    :string(8)
+#  fen              :string(128)
+#  movetext         :text
+#  pgn              :text
+#  num_views        :integer
+#  num_completions  :integer
+#  num_ratings      :integer
+#  avg_rating       :float
+#  difficulty_score :float
+#  created_at       :datetime
+#  updated_at       :datetime
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  obsfucated_id: MyString
+  fen: MyString
+  movetext: MyText
+  pgn: MyText
+  num_views: 1
+  num_completions: 1
+  num_ratings: 1
+  avg_rating: 1.5
+  difficulty_score: 1.5
+
+two:
+  obsfucated_id: MyString
+  fen: MyString
+  movetext: MyText
+  pgn: MyText
+  num_views: 1
+  num_completions: 1
+  num_ratings: 1
+  avg_rating: 1.5
+  difficulty_score: 1.5

@@ -1,0 +1,37 @@
+<%- model_class = Puzzle -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
+</div>
+
+<dl class="dl-horizontal">
+  <dt><strong><%= model_class.human_attribute_name(:obsfucated_id) %>:</strong></dt>
+  <dd><%= @puzzle.obsfucated_id %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:fen) %>:</strong></dt>
+  <dd><%= @puzzle.fen %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:movetext) %>:</strong></dt>
+  <dd><%= @puzzle.movetext %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:pgn) %>:</strong></dt>
+  <dd><%= @puzzle.pgn %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:num_views) %>:</strong></dt>
+  <dd><%= @puzzle.num_views %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:num_completions) %>:</strong></dt>
+  <dd><%= @puzzle.num_completions %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:num_ratings) %>:</strong></dt>
+  <dd><%= @puzzle.num_ratings %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:avg_rating) %>:</strong></dt>
+  <dd><%= @puzzle.avg_rating %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:difficulty_score) %>:</strong></dt>
+  <dd><%= @puzzle.difficulty_score %></dd>
+</dl>
+
+<div class="form-actions">
+  <%= link_to t('.back', :default => t("helpers.links.back")),
+              puzzles_path, :class => 'btn'  %>
+  <%= link_to t('.edit', :default => t("helpers.links.edit")),
+              edit_puzzle_path(@puzzle), :class => 'btn' %>
+  <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+              puzzle_path(@puzzle),
+              :method => 'delete',
+              :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+              :class => 'btn btn-danger' %>
+</div>

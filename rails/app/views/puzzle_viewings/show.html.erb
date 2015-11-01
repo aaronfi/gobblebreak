@@ -1,0 +1,64 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>User:</strong>
+  <%= @puzzle_viewing.user %>
+</p>
+
+<p>
+  <strong>Puzzle:</strong>
+  <%= @puzzle_viewing.puzzle %>
+</p>
+
+<p>
+  <strong>Start date:</strong>
+  <%= @puzzle_viewing.start_date %>
+</p>
+
+<p>
+  <strong>End date:</strong>
+  <%= @puzzle_viewing.end_date %>
+</p>
+
+<p>
+  <strong>Num seconds viewed:</strong>
+  <%= @puzzle_viewing.num_seconds_viewed %>
+</p>
+
+<p>
+  <strong>Num seconds to solve:</strong>
+  <%= @puzzle_viewing.num_seconds_to_solve %>
+</p>
+
+<p>
+  <strong>Was solved:</strong>
+  <%= @puzzle_viewing.was_solved %>
+</p>
+
+<p>
+  <strong>Was answer asked for:</strong>
+  <%= @puzzle_viewing.was_answer_asked_for %>
+</p>
+
+<p>
+  <strong>Num attempts:</strong>
+  <%= @puzzle_viewing.num_attempts %>
+</p>
+
+<p>
+  <strong>Num hints used:</strong>
+  <%= @puzzle_viewing.num_hints_used %>
+</p>
+
+<p>
+  <strong>Level of hint used:</strong>
+  <%= @puzzle_viewing.level_of_hint_used %>
+</p>
+
+<p>
+  <strong>User current rating:</strong>
+  <%= @puzzle_viewing.user_current_rating %>
+</p>
+
+<%= link_to 'Edit', edit_puzzle_viewing_path(@puzzle_viewing) %> |
+<%= link_to 'Back', puzzle_viewings_path %>

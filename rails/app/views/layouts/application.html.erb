@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+      <!--
+
+TODO    Google allows you to declare in the <head> of an HTML page what the primary "canonical" URL of a page should be, using a <link rel="canonical" href="https://www.chessbreak.com/"> element.  If someone links to the same content at a different URL, e.g.  https://www.chessbreak.com?src=whatever Google can automatically drop the "?src=whatever" page from the index and merge its link juice into the canonical URL. Every page on our site should include rel=canonical.
+
+rel=next, rel=prev
+One particularly common use of URL parameters is to paginate, e.g. ?page=1 ?page=2 ?page=3 or ?offset=0 ?offset=50 ?offset=100 etc.  Google recommends using a tag in the header of the page to indicate the subsequent page in a series:
+
+<link rel="next" href="https://www.redfin.com/blah/blah?page=2">
+
+On the second page, you can then link to the third page and back to the first page:
+
+<link rel="prev" href="https://www.chessbreak.com/blah/blah?page=1">
+<link rel="next" href="https://www.chessbreak.com/blah/blah?page=3">
+
+Google has said that they use these next/prev links to group all of the pages together into one
+
+giant page for the purposes of PageRank.
+
+TODO Relevance: URL, Title, Description, H1
+
+To be relevant to a user's search, you need to use the same language that the user submitted in the search query.  Specifically, relevant keywords should appear in:
+
+● The URL of the page
+● <title> tag in the head
+● <meta name="description"> tag in the head
+● <h1> tag in the body
+● If there are images on the page, their "alt" attribute should include keyword­laden text explaining what the image is about But, somewhat contradicting this, shorter URLs and titles are better than longer ones.​We should omit unnecessary junk from the URL. Also, don't stuff the title/description/H1 full of possible keywords. Google detects that as a sign of "over optimization." We have seen that putting keywords in the URL can be especially important.​I suspect that this is because, in many cases, people create links just by copying and pasting the URL, like this:
+
+<a href="https://www.redfin.com/what-is-my-home-worth">https://www.redfin.com/what-is-my-home-worth</a>
+
+
+TODO Clickthrough
+
+Surprisingly, this is probably the area where we have the most direct influence over the process as engineers. On the search results page, (or as SEOs call them, SERPs, for "Search Engine Results Pages"), Google shows some content from our page that we mostly control:
+
+● the title of the page (controlled via <title> tag)
+● the URL, which you'll note is bolded when it contains keywords that match the user's search
+● the "snippet" appearing underneath the title (controlled with <meta name="description">)
+
+But that's not all. Google supports something called "Rich Snippets" aka "Structured Data." If you use certain specially formatted HTML tags on your page, Google will add special content to the snippet. As of May 2015, Google only support about a dozen types of Rich Snippets:
+
+https://developers.google.com/structured­data/
+
+● Products
+● Recipes
+● Reviews:​Show a star rating, e.g. on agent profiles
+● Events:​Show date and time, e.g. open houses
+● Apps: Restricted; we can't use it. But it works on the App Store and Google Play Store already.  ̄\_(ツ)_/ ̄
+● Videos
+● Articles
+● Site name: That's why it says "Redfin" in grey.
+● Sitelinks: The list of links underneath the site when you search for "Redfin"
+● Breadcrumbs:​See below
+
+Breadcrumbs replace the URL with a Breadcrumb, a list of links indicating a hierarchy.  Despite all this, we do not completely control our appearance in search results. G​oogle can decide to randomly ignore our rich snippets, replace our description with something else, replace our titles with titles cleaned from anchor text elsewhere, etc. But we do still have a lot of sway!
+
+-->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <meta name="google-signin-client_id" content="gobble-break.apps.googleusercontent.com">
+        <meta name="google-signin-scope" content="profile email">
+
+        <title><%= content_for?(:title) ? yield(:title) : "Gobble Break" %></title>
+
+        <%= csrf_meta_tags %>
+
+        <%= stylesheet_link_tag "application", :media => "all" %>
+
+        <!-- For third-generation iPad with high-resolution Retina display: -->
+        <!-- Size should be 144 x 144 pixels -->
+        <%= favicon_link_tag 'apple-touch-icon-144x144-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '144x144' %>
+        <!-- For iPhone with high-resolution Retina display: -->
+        <!-- Size should be 114 x 114 pixels -->
+        <%= favicon_link_tag 'apple-touch-icon-114x114-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '114x114' %>
+        <!-- For first- and second-generation iPad: -->
+        <!-- Size should be 72 x 72 pixels -->
+        <%= favicon_link_tag 'apple-touch-icon-72x72-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '72x72' %>
+        <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+        <!-- Size should be 57 x 57 pixels -->
+        <%= favicon_link_tag 'apple-touch-icon-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png' %>
+        <!-- For all other devices -->
+        <!-- Size should be 32 x 32 pixels -->
+        <%= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
+    </head>
+    <body>
+        <!-- Place at the end of the document so the pages load faster
+            TODO(aaronfi) loading at the end, causes other page-specific js to break;
+            can i somehow get away with putting this last -->
+        <%= javascript_include_tag "application" %>
+
+        <%= render 'layouts/header' %>
+
+        <!--TODO(aaronfi) confirm that bootstrap_flash adds messages; -->
+        <!--try a sample message to confirm look/feel-->
+        <%= bootstrap_flash %>
+        <%= yield %>
+        <%= render 'layouts/footer' %>
+
+    </body>
+</html>

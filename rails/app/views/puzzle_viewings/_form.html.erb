@@ -1,0 +1,65 @@
+<%= form_for(@puzzle_viewing) do |f| %>
+  <% if @puzzle_viewing.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@puzzle_viewing.errors.count, "error") %> prohibited this puzzle_viewing from being saved:</h2>
+
+      <ul>
+      <% @puzzle_viewing.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :user %><br>
+    <%= f.text_field :user %>
+  </div>
+  <div class="field">
+    <%= f.label :puzzle %><br>
+    <%= f.text_field :puzzle %>
+  </div>
+  <div class="field">
+    <%= f.label :start_date %><br>
+    <%= f.datetime_select :start_date %>
+  </div>
+  <div class="field">
+    <%= f.label :end_date %><br>
+    <%= f.datetime_select :end_date %>
+  </div>
+  <div class="field">
+    <%= f.label :num_seconds_viewed %><br>
+    <%= f.text_field :num_seconds_viewed %>
+  </div>
+  <div class="field">
+    <%= f.label :num_seconds_to_solve %><br>
+    <%= f.text_field :num_seconds_to_solve %>
+  </div>
+  <div class="field">
+    <%= f.label :was_solved %><br>
+    <%= f.check_box :was_solved %>
+  </div>
+  <div class="field">
+    <%= f.label :was_answer_asked_for %><br>
+    <%= f.check_box :was_answer_asked_for %>
+  </div>
+  <div class="field">
+    <%= f.label :num_attempts %><br>
+    <%= f.number_field :num_attempts %>
+  </div>
+  <div class="field">
+    <%= f.label :num_hints_used %><br>
+    <%= f.number_field :num_hints_used %>
+  </div>
+  <div class="field">
+    <%= f.label :level_of_hint_used %><br>
+    <%= f.number_field :level_of_hint_used %>
+  </div>
+  <div class="field">
+    <%= f.label :user_current_rating %><br>
+    <%= f.text_field :user_current_rating %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

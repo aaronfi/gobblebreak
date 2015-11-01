@@ -1,0 +1,187 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar-header col-sm-2">
+        <ul class="nav navbar-nav">
+            <li class="nav-item">
+                <%= link_to 'gobblebreak', '/', class: 'navbar-brand' %>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-header col-sm-8">
+        <ul class="nav navbar-nav">
+            <li class="nav-item">
+                <span id="subheading" class="navbar-nav"></span>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-header col-sm-2">
+        <div class="navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a class="dropdown-toggle pull-right" data-toggle="dropdown" href="" aria-haspopup="true" aria-expanded="false">
+                        <% if current_user %>
+                            <%= current_user.name %> <img src="<%= current_user.image %>?sz=50" class="profile-pic" />
+                        <% else %>
+                            Sign in
+                        <% end %>
+                    </a>
+                    <div class="dropdown-menu pull-right">
+                        <% if current_user %>
+                            <%= link_to 'Sign out', signout_path, id: 'sign_out', class: 'dropdown-item' %>
+                        <% else %>
+                            <%= link_to user_omniauth_authorize_path(:facebook), class: 'dropdown-item' do %>
+                                <span class="sign-in-with-facebook">
+                                    <span class="icon-container">
+                                        <%= image_tag image_path('facebook_logo_white_29.png') %>
+                                    </span>
+                                    <span class="text-container">
+                                        Log in with Facebook
+                                    </span>
+                                </span>
+                            <% end %>
+                            <%= link_to user_omniauth_authorize_path(:google_oauth2), class: 'dropdown-item' do %>
+                                <span class="sign-in-with-google">
+                                    <span class="icon-container">
+                                        <%= image_tag image_path('google_logo.png') %>
+                                    </span>
+                                    <span class="text-container">
+                                        Log in with Google
+                                    </span>
+                                </span>
+                            <% end %>
+
+                            <div class="dropdown-divider"></div>
+
+                            <%= form_for('user', url: user_session_path, html: { class: 'dropdown-item sign-in-with-email' }) do |f| %>
+                                <%= f.email_field :email, autofocus: true, placeholder: 'Email Address' %>
+                                <%= f.password_field :password, placeholder: 'Password' %>
+
+                                <%= f.submit "Log in" %>
+                            <% end %>
+                        <% end %>
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Separated link</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+<!-- TODO everything below is cruft;  revisit / clear out as some point -->
+
+<!--&lt;!&ndash;<header class="navbar navbar-fluid-top navbar-inverse">&ndash;&gt;-->
+  <!--<div class="navbar-inner">-->
+    <!--<div class="container-fluid">-->
+      <!--<a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">-->
+        <!--<span class="icon-bar">&lt;!&ndash; TODO-icon1 &ndash;&gt;</span>-->
+        <!--<span class="icon-bar">&lt;!&ndash; TODO-icon2-only-shows-when-page-width-is-small-enough &ndash;&gt;</span>-->
+      <!--</a>-->
+      <!--<%= link_to "Chessbreak", '/', class: "brand" %>-->
+      <!--<nav>-->
+        <!--<ul class="nav pull-right">-->
+ <!--&lt;!&ndash;TODO(aaronfi) put this into own file&ndash;&gt;-->
+          <!--&lt;!&ndash; TODO(aaronfi) center this &ndash;&gt;-->
+          <!--<form class="navbar-search">-->
+            <!--&lt;!&ndash; TODO(aaronfi) get  :autofocus => true here;  need to wrap in form_for() ruby call first &ndash;&gt;-->
+            <!--<input type="text" class="search-query" placeholder="Search">-->
+          <!--</form>-->
+
+          <!--<% if user_signed_in? %>-->
+              <!--<li>-->
+                <!--<%= link_to 'Logout', destroy_user_session_path, :method =>'delete' %>-->
+              <!--</li>-->
+          <!--<% else %>-->
+              <!--<li>-->
+                <!--<%= link_to 'Login', new_user_session_path %>-->
+              <!--</li>-->
+          <!--<% end %>-->
+
+          <!--<% if user_signed_in? %>-->
+              <!--<li>-->
+                <!--<%= link_to 'Edit account', edit_user_registration_path %>-->
+              <!--</li>-->
+              <!--<% if current_user.has_role? :admin %>-->
+                  <!--<li>-->
+                    <!--<%= link_to 'Admin', users_path %>-->
+                  <!--</li>-->
+              <!--<% end %>-->
+          <!--<% else %>-->
+              <!--<li>-->
+                <!--<%= link_to 'Sign up', new_user_registration_path %>-->
+              <!--</li>-->
+          <!--<% end %>-->
+
+          <!--<li class="dropdown">-->
+            <!--<a class="btn dropdown-toggle" href="#" data-toggle="dropdown"><i class="fa fa-list-ul"></i></a>-->
+            <!--<ul class="dropdown-menu" style="width:900px;"> &lt;!&ndash; TODO aaron remove inline styling &ndash;&gt;-->
+
+              <!--&lt;!&ndash; TODO(4/22/14) aaron, remove this hardcoding, instead programmatically generate config from the users.rb model file &ndash;&gt;-->
+              <!--<div class="well" style="margin:1em;">-->
+                <!--<div class="column3">-->
+                  <!--<div class="checkbox"><label><input type="checkbox">show letters / numbers</label></div>-->
+                  <!--<div class="checkbox" style="margin-left:1.5em;"><label><input type="checkbox">inside or outside board</label></div>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">change board pieces</label></div>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">change board colors</label></div>-->
+                  <!--<% form_for('/user', remote: true) do |f| %>-->
+                      <!--<% f.check_box :board_size %>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">change board width/size</label></div>-->
+                  <!--<% end %>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">highlight legal moves on mouseover</label></div>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">highlight legal moves on mousedrag</label></div>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">display puzzle goal vs. display just side to move</label></div>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">display remaining move count</label></div>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">immediate feedback on correct moves</label></div>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">immediate feedback on incorrect moves</label></div>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">let computer continue game</label></div>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">show/hide user comments and annotations</label></div>-->
+                <!--</div>-->
+                <!--<div class="column3">-->
+                  <!--<div class="checkbox"><label><input type="checkbox">allow hints</label></div>-->
+                  <!--<div class="checkbox" style="margin-left:1.5em;"><label><input type="checkbox">remove incorrect moves</label></div>-->
+                  <!--<div class="checkbox" style="margin-left:1.5em;"><label><input type="checkbox">highlight correct piece to move</label></div>-->
+                  <!--<div class="checkbox" style="margin-left:1.5em;"><label><input type="checkbox">highlight correct move</label></div>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">display list of possible moves</label></div>-->
+                  <!--<div class="checkbox" style="margin-left:1.5em;"><label><input type="checkbox">display move list in SAN</label></div>-->
+                  <!--<div class="checkbox" style="margin-left:1.5em;"><label><input type="checkbox">display piece names as icons instead of letters</label></div>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">display move timing</label></div>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">display puzzle countdown timer (overall)</label></div>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">display move history as table vs. inline</label></div>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">show puzzle stats at beginning of puzzle</label></div>-->
+                  <!--<br/>-->
+                  <!--<div class="checkbox"><label><input type="checkbox">show personal puzzle stats at completion of puzzle;  or giving up on puzzle</label></div>-->
+                <!--</div>-->
+              <!--</div>-->
+<!--<script>
+//              function autoSave() {
+//                  $.ajax({
+//                     type: "POST",
+//                     url: "/submissions",
+//                     dataType: "json",
+//                     data: {title: $("#title-create-partial").text().serialize(), content: $("#content-create-partial").text().serialize()},
+//                     success: function(){
+//                         $("#success-indicate").fadeIn().delay(4000).fadeOut();
+//                     }
+//                  });
+//                  setTimeout(autoSave, 6000)
+//              }
+</script>-->
+            <!--</ul>-->
+          <!--</li>-->
+
+        <!--</ul>-->
+      <!--</nav>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</header>-->
