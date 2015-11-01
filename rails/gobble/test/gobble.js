@@ -1,12 +1,12 @@
 'use strict';
 
 const assert = require("assert");
-const Boggle = require('./../src/boggle');
+const Gobble = require('./../src/gobble');
 
-suite("Boggle", () => {
+suite("Gobble", () => {
 	suite("neighbor adjacency generation", () => {
 		test("4x4", () => {
-			const game = new Boggle({ x: 4, y: 4, letters: 'doesnotmatter' });
+			const game = new Gobble({ x: 4, y: 4, letters: 'doesnotmatter' });
 			assert.deepEqual(game.board,
 				[ [ 1, 4, 5 ],
 				  [ 0, 2, 4, 5, 6 ],
@@ -27,7 +27,7 @@ suite("Boggle", () => {
 			);
 		});
 		test("5x5", () => {
-			const game = new Boggle({ x: 5, y: 5, letters: 'doesnotmatter' });
+			const game = new Gobble({ x: 5, y: 5, letters: 'doesnotmatter' });
 			assert.deepEqual(game.board,
 				[ [ 1, 5, 6 ],
 				  [ 0, 2, 5, 6, 7 ],
@@ -57,7 +57,7 @@ suite("Boggle", () => {
 			);
 		});
 		test("1x5", () => {
-			const game = new Boggle({ x: 1, y: 5, letters: 'doesnotmatter' });
+			const game = new Gobble({ x: 1, y: 5, letters: 'doesnotmatter' });
 			assert.deepEqual(game.board,
 				[ [ 1 ], 
 				  [ 0, 2 ],
@@ -67,7 +67,7 @@ suite("Boggle", () => {
 			);
 		});
 		test("5x1", () => {
-			const game = new Boggle({ x: 5, y: 1, letters: 'doesnotmatter' });
+			const game = new Gobble({ x: 5, y: 1, letters: 'doesnotmatter' });
 			assert.deepEqual(game.board,
 				[ [ 1 ], 
 				  [ 0, 2 ],
@@ -77,7 +77,7 @@ suite("Boggle", () => {
 			);
 		});
 		test("2x3", () => {
-			const game = new Boggle({ x: 2, y: 3, letters: 'doesnotmatter' });
+			const game = new Gobble({ x: 2, y: 3, letters: 'doesnotmatter' });
 			assert.deepEqual(game.board,
 				[ [ 1, 2, 3 ],
 				  [ 0, 2, 3 ],
@@ -91,13 +91,13 @@ suite("Boggle", () => {
 
 	suite("word range enforcement", () => {
 		test("10-50", () => {
-			const game = new Boggle({ x: 2, y: 2, minWords: 10, maxWords: 50, minWordLength: 4 });
+			const game = new Gobble({ x: 2, y: 2, minWords: 10, maxWords: 50, minWordLength: 4 });
 		});
 	});
 
 	suite("solver", () => {		
 	    test("4x4", () => {
-	        const game = new Boggle();
+	        const game = new Gobble();
 
 	        // d g h i 
 	        // k l p s 
@@ -133,13 +133,13 @@ suite("Boggle", () => {
 		})
 
 		test("5x5", () => {
-			const game = new Boggle({ x: 5, y: 5 });
+			const game = new Gobble({ x: 5, y: 5 });
 			// TODO
 			// console.log(game.toString());
 		});
 
 		test("25x32", () => {
-			const game = new Boggle({ x: 25, y: 32, letters: 'iwkeceeoelheereoamcgodecwtetstdeavtoprfdheorctalnysofplhmunguoemsehdetceabseswfpnlibdttnsaawoerdescaeihttnuemeelclvosbyosfettcilnalrkaatyotcoailnergfesealarutnlklynhthrcclteobarhoaseehnuimonhoklfatsyeevsgfnprrdidrd.ptnecyfepucaneheydctcsootnouosbteonnlcwfhtphieclumrmeegeetseeufidgstayrmtercohreaniitflcyoshronshthdhsrehrrlpediypnimeiusmtadfwklelyhtlrorlodemicaytovuufgadmeenotcdinuurnoyahpesnedenynewitygdrtvchuoaceeaonpervhticayerdeueerdcoshhahsapeanbeeadllewgecelllodeasinflpakhsyiadtiihwytrgrhaitfteeesviaoibxfhmpaufenhgcccrwtevrarrselaisntfspeosenastanpeseoghewuwasaoekeeirtfyehucienreaasfahorrerbairrshagidgloeaetoesugthtceuarallhilrvdaestwoaosdatptsascrsatettcsentisaamefailiuvdfpidvragoohhmnsnneiindltudnirwhghhwsnlthduhhhdgsedefoenortcsoiooetchtctiametimopidoheirhvmedhifhralitnciahnffetsgii' });
+			const game = new Gobble({ x: 25, y: 32, letters: 'iwkeceeoelheereoamcgodecwtetstdeavtoprfdheorctalnysofplhmunguoemsehdetceabseswfpnlibdttnsaawoerdescaeihttnuemeelclvosbyosfettcilnalrkaatyotcoailnergfesealarutnlklynhthrcclteobarhoaseehnuimonhoklfatsyeevsgfnprrdidrd.ptnecyfepucaneheydctcsootnouosbteonnlcwfhtphieclumrmeegeetseeufidgstayrmtercohreaniitflcyoshronshthdhsrehrrlpediypnimeiusmtadfwklelyhtlrorlodemicaytovuufgadmeenotcdinuurnoyahpesnedenynewitygdrtvchuoaceeaonpervhticayerdeueerdcoshhahsapeanbeeadllewgecelllodeasinflpakhsyiadtiihwytrgrhaitfteeesviaoibxfhmpaufenhgcccrwtevrarrselaisntfspeosenastanpeseoghewuwasaoekeeirtfyehucienreaasfahorrerbairrshagidgloeaetoesugthtceuarallhilrvdaestwoaosdatptsascrsatettcsentisaamefailiuvdfpidvragoohhmnsnneiindltudnirwhghhwsnlthduhhhdgsedefoenortcsoiooetchtctiametimopidoheirhvmedhifhralitnciahnffetsgii' });
 			assert.equal(game.answers[3].length, 6207);
 
 			console.log(game.toString());
@@ -149,7 +149,7 @@ suite("Boggle", () => {
 
 	suite("user session", () => {
 		test("session #1", () => {
-			const game = new Boggle({ x: 4, y: 4, letters: 'etobecisea.snard' });
+			const game = new Gobble({ x: 4, y: 4, letters: 'etobecisea.snard' });
 
  		    //  0  1  2  3
  		    //  4  5  6  7

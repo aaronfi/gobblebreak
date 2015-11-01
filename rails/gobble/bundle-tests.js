@@ -1,0 +1,3 @@
+
+require('./test/gobble.js');
+

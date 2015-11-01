@@ -10,8 +10,8 @@ closureCompiler.options['compilation_level'] = 'SIMPLE';   // 2015.09.01 the 'AD
 module.exports = {
     context: __dirname,
     entry: {
-        boggle: './bundle.js',
-        'boggle-tests': './bundle-tests.js'
+        gobble: './bundle.js',
+        'gobble-tests': './bundle-tests.js'
     },
     output: {
         path: path.join(__dirname, '../', 'app', 'assets', 'javascripts'),

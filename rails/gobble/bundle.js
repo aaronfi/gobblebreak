@@ -1,4 +1,4 @@
-module.exports = require("./src/boggle.js");
+module.exports = require("./src/gobble.js");
 
 // TODO consider user of objectAssign npm module / polyfill
 //

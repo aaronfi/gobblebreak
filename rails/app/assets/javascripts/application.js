@@ -13,5 +13,5 @@
 //= require jquery
 //= require jquery.ui.resizable
 //= require jqconsole.min
-//= require gobble
+//= require gobble-bundle
 //= require bootstrap

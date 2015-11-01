@@ -36,7 +36,7 @@ const EventLog = require('./../src/event_log');
 //
 // TODO let user decide if words are rejected immediately, or scored immediately
 
-class Boggle {
+class Gobble {
 
     constructor(options = {}) {
         options = Object.assign({}, {
@@ -360,4 +360,4 @@ class Boggle {
 	}
 };
 
-module.exports = Boggle;
+module.exports = Gobble;

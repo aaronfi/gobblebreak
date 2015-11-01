@@ -1,3 +1,0 @@
-
-require('./test/boggle.js');
-
