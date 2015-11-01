@@ -13,8 +13,5 @@
 //= require jquery
 //= require jquery.ui.resizable
 //= require jqconsole.min
+//= require gobble
 //= require bootstrap
-//= require chessboard
-//= require chess
-//= require chess2-bundle
-//= require engine
