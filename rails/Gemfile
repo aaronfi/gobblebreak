@@ -34,6 +34,7 @@ gem 'annotate'                  # used to generate comments in each of your mode
 gem 'bcrypt-ruby', '~> 3.0.0'   # use ActiveModel has_secure_password
 gem 'cancan', '>= 1.6.10'
 gem 'closure-compiler'          # Google's Closure Compiler for javascript minimization and performance enhancements
+gem 'font-awesome-rails'
 gem 'hstore_accessor'           # for accessing Postgres hstore columns as objects
 gem 'jbuilder', '~> 1.0.1'      # build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jquery-rails'              # use jquery as the JavaScript library

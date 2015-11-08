@@ -6,6 +6,9 @@ const Gobble = require('./../src/gobble');
 suite("Gobble", () => {
 	suite("neighbor adjacency generation", () => {
 		test("4x4", () => {
+
+			debugger;
+
 			const game = new Gobble({ x: 4, y: 4, letters: 'doesnotmatter' });
 			assert.deepEqual(game.board,
 				[ [ 1, 4, 5 ],

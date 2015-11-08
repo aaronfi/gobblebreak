@@ -218,6 +218,29 @@ class Gobble {
     	return score;
     }
 
+	toHtml() {
+        let result = '';
+
+        for(let j = 0; j < this.y; j++) {
+            result += '<div class="row">';
+            for (let i = 0; i < this.x; i++) {
+                let curr = (j * this.x) + i;
+
+                result += `<div class="square"><div><span id="sq${curr}">`;
+                if (this.letters[curr] === '.') {
+                    result += 'Qu';
+                } else {
+                    result += this.letters[curr].toUpperCase();
+                }
+                result += `</span></div></div>`;
+            }
+
+            result += '<div class="clearfix"></div></div>';
+        }
+
+        return result;
+	}
+
     toString() {
     	let result = '\n+-' + '---'.repeat(this.x) + '+\n';
     	for(let j = 0; j < this.y; j++) {

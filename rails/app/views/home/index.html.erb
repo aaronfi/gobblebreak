@@ -1,49 +1,85 @@
-<style>
-    #resizable {
-        padding: 0.5rem;
-        width:65%;  /* TODO(aaron,4/12) programmatically set this initial width from user's preferences;  cookie? */
-        margin-left:auto;
-        margin-right:auto;
-        margin-bottom: 200px;
-    }
-</style>
 
 <div class="container" id="topContainer">
-    <div class="row">
-        <div class="col-sm-9">
-            <div class="ui-content-widget ui-resizable" id="resizable">
-                <div id="board"></div> <!-- class="animate tossing"> -->
+    <div class="col-sm-2">
+        <div class="inputs">
+            <div class="input-group spinner">
+                <span class="input-group-addon" id="size">Size</span>
+                <input type="text" class="form-control" id="sizex" value="4">
+                <div class="input-group-btn-vertical" id="sizex_spinner">
+                    <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
+                    <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
+                </div>
+                <span class="input-group-addon">by</span>
+                <input type="text" class="form-control" id="sizey" value="4">
+                <div class="input-group-btn-vertical" id="sizey_spinner">
+                    <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
+                    <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-sm-3" id="rightPane">
-            <div id="moves" />
-            <textarea id="debug1"></textarea>
-            <textarea id="debug3"></textarea>
+    <div class="col-sm-10">
+        <div class="ui-content-widget ui-resizable" id="resizable">
+            <div id="board" class="board"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // board = new ChessBoard('board', cfg);
+    $('#sizex_spinner .btn:first-of-type').on('click', function() {
+        $('#sizex').val( parseInt($('#sizex').val(), 10) + 1);
+        shuffleBoard();
+    });
+    $('#sizex_spinner .btn:last-of-type').on('click', function() {
+        $('#sizex').val( Math.max(1, parseInt($('#sizex').val(), 10) - 1));
+        shuffleBoard();
+    });
+
+    $('#sizey_spinner .btn:first-of-type').on('click', function() {
+        $('#sizey').val( parseInt($('#sizey').val(), 10) + 1);
+        shuffleBoard();
+    });
+    $('#sizey_spinner .btn:last-of-type').on('click', function() {
+        $('#sizey').val( Math.max(1, parseInt($('#sizey').val(), 10) - 1));
+        shuffleBoard();
+    });
+
+    var shuffleBoard = function() {
+        game = new Foo({ x: $('#sizex').val(), y: $('#sizey').val() });
+        $('#board').html(game.toHtml());
+    };
+    $('#sizex').change(shuffleBoard);
+    $('#sizey').change(shuffleBoard);
+
+    shuffleBoard();
 
     $('#resizable').resizable({
+        start: function(event, ui) {
+            $('#board').css({ 'border-color': 'blue' });
+        },
         resize: function(event, ui) {
-            $('#board > div > div').css({ 'border-color': 'blue' });
+            $('#board').css({ 'border-color': 'blue' });
 
-            $("#board").width( ui.size.width );
-            $("#board").height( ui.size.width );  // not a typo;  we set board's height equal to UI's width, to enforce a square board
-            board.resize();
+var old = game.size;
+            game.size = ~~ Math.min(ui.size.height, ui.size.width) / Math.max(game.x, game.y);
+console.log(ui.size.height + " " +ui.size.width + " " + old + " " + game.size);
+
+            $(".square").css({
+                'font-size': (game.size * 0.5) + 'px',
+                'width': game.size + 'px',
+                'height': game.size + 'px',
+                'border-width': game.size < 45 ? '1px' : '1mm'
+            });
 
             // for some reason, these two commands are necessary;  otherwise the resize triangle can end up misaligned.
-            $('#resizable').width( $('#board').width() );
-            $('#resizable').height( $('#board').width() );
+            $('#resizable').css('height', '');
+            $('#resizable').css('width', '');
         },
         stop: function(event, ui) {
-            $('#board > div > div').css({ 'border-color': 'black' });
+            $('#board').css({ 'border-color': 'transparent' });
         },
         aspectRatio: true,
-        grid: [8,8],
         handles: "nw, se"
     });
 
@@ -52,21 +88,21 @@
         .removeClass('ui-icon-gripsmall-diagonal-se')
         .hover(
             function() {
-                $('#board > div > div').css({ 'border-color': 'blue' });
+                $('#board').css({ 'border-color': 'blue' });
+                $('.ui-icon-gripsmall-diagonal-se').css({ 'border-color': 'blue' });
             },
             function() {
-                $('#board > div > div').css({ 'border-color': 'black' });
+                $('#board').css({ 'border-color': 'transparent' });
+                $('.ui-icon-gripsmall-diagonal-se').css({ 'border-color': 'transparent' });
             }
         )
         .mousedown(function() {
-            $('#board > div > div').css({ 'border-color': 'blue' });
+            $('#board').css({ 'border-color': 'blue' });
         })
         .mouseup(function() {
-            $('#board > div > div').css({ 'border-color': 'black' });
+            $('#board').css({ 'border-color': 'transparent' });
         });
-</script>
 
-<script>
     $(window).load(function () {
         var e, t, n, i, r, o, s;
         r = $("#subheading");
@@ -97,7 +133,7 @@
                 return void 0;
             };
             n = $('<span class="text"/>');
-            i = ["The fullest featured website for", " Boggle."];
+            i = ["Blah blah blah", "blah blah"];
             r.empty().append(n).append(e);
             return s(n, i, function () {
                         return setTimeout(function () {
@@ -126,6 +162,4 @@
             );
         }
     });
-
-    var game = new Foo();
 </script>
