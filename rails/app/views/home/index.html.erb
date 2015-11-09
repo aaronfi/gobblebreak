@@ -4,17 +4,9 @@
         <div class="inputs">
             <div class="input-group spinner">
                 <span class="input-group-addon" id="size">Size</span>
-                <input type="text" class="form-control" id="sizex" value="4">
-                <div class="input-group-btn-vertical" id="sizex_spinner">
-                    <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
-                    <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
-                </div>
+                <input type="text" class="form-control" id="sizex" value="4" tabindex=1>
                 <span class="input-group-addon">by</span>
-                <input type="text" class="form-control" id="sizey" value="4">
-                <div class="input-group-btn-vertical" id="sizey_spinner">
-                    <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
-                    <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
-                </div>
+                <input type="text" class="form-control" id="sizey" value="4" tabindex=2>
             </div>
         </div>
     </div>
@@ -27,32 +19,92 @@
 </div>
 
 <script>
-    $('#sizex_spinner .btn:first-of-type').on('click', function() {
-        $('#sizex').val( parseInt($('#sizex').val(), 10) + 1);
-        shuffleBoard();
-    });
-    $('#sizex_spinner .btn:last-of-type').on('click', function() {
-        $('#sizex').val( Math.max(1, parseInt($('#sizex').val(), 10) - 1));
-        shuffleBoard();
-    });
-
-    $('#sizey_spinner .btn:first-of-type').on('click', function() {
-        $('#sizey').val( parseInt($('#sizey').val(), 10) + 1);
-        shuffleBoard();
-    });
-    $('#sizey_spinner .btn:last-of-type').on('click', function() {
-        $('#sizey').val( Math.max(1, parseInt($('#sizey').val(), 10) - 1));
-        shuffleBoard();
-    });
-
+    var solver;
+    var game;
     var shuffleBoard = function() {
-        game = new Foo({ x: $('#sizex').val(), y: $('#sizey').val() });
+        var x = $('#sizex').val();
+        var y = $('#sizey').val();
+        game = new Foo({ x: x, y: y });
         $('#board').html(game.toHtml());
+        
+        if (solver) {
+            solver.terminate();
+        }
+        solver = new Worker("/assets/worker.js");
+        solver.onmessage = function(e) {
+            game.answers = e.data;
+            console.log('Answers calculation finished.');
+            console.log(game.answers);
+        }
+        solver.postMessage([x, y, game.letters]);
     };
-    $('#sizex').change(shuffleBoard);
-    $('#sizey').change(shuffleBoard);
 
     shuffleBoard();
+
+    $('#board').html(game.toHtml());
+
+    var incr_x = function() {
+        $('#sizex').val(parseInt($('#sizex').val(), 10) + 1);
+        shuffleBoard();
+    };
+    var decr_x = function() {
+        $('#sizex').val(Math.max(1, parseInt($('#sizex').val(), 10) - 1));
+        shuffleBoard();
+    }
+    var incr_y = function() {
+        $('#sizey').val(parseInt($('#sizey').val(), 10) + 1);
+        shuffleBoard();
+    };
+    var decr_y = function() {
+        $('#sizey').val(Math.max(1, parseInt($('#sizey').val(), 10) - 1));
+        shuffleBoard();
+    }
+
+    $('#sizex').bind('keydown', function(e) {
+            switch (e.keyCode) {
+                case 37:
+                    e.preventDefault();
+                    decr_y();
+                    break;
+                case 38:
+                    e.preventDefault();
+                    incr_x();
+                    break;
+                case 39:
+                    e.preventDefault();
+                    incr_y();
+                    break;
+                case 40:
+                    e.preventDefault();
+                    decr_x();
+                    break;
+                default:
+            }
+        });
+    $('#sizex').change(shuffleBoard);
+
+    $('#sizey').bind('keydown', function(e) {
+            switch (e.keyCode) {
+                case 37:
+                    e.preventDefault();
+                    decr_x();
+                    break;
+                case 38:
+                    e.preventDefault();
+                    incr_y();
+                    break;
+                case 39:
+                    e.preventDefault();
+                    incr_x();
+                    break;
+                case 40:
+                    e.preventDefault();
+                    decr_y();
+                    break;
+                default:
+            }
+        });
+    $('#sizey').change(shuffleBoard);
 
     $('#resizable').resizable({
         start: function(event, ui) {

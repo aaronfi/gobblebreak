@@ -110,14 +110,27 @@ class Gobble {
 
 		this.guesses = new Set();
 
+        this.answers = [];
+
 		if (options.letters) {
 		    this.letters = options.letters;
-		    this.answers = this.solve();
 		} else {
 			this.shuffleBoard();
 		}
 
         this.eventLog = new EventLog();
+    }
+
+    // TODO this is broken;  isn't recalculating full board nieghobrs.  should make use of a reset() function ?
+    resize(options) {
+        this.x = options.x;
+        this.y = options.y;
+        this.randomizerStrategy.x = options.x;
+        this.randomizerStrategy.y = options.y;
+
+        this.eventLog = new EventLog();
+
+        this.shuffleBoard();
     }
 
     submitWord(moves /* array of board index values */) {
@@ -365,21 +378,21 @@ class Gobble {
 		let attempts = 0;
 
 		this.letters = this.randomizerStrategy.shuffleBoard();
-		this.answers = this.solve();
+//		this.answers = this.solve();
 
-		if (this.maxWords || this.minWords) {
-			while (attempts < 250 && (this.answers.length < this.minWords || this.answers.length > this.maxWords)) {
-				this.letters = this.randomizerStrategy.shuffleBoard();
-				this.answers = this.solve();
-				attempts += 1;
-
-				console.log(`Attempt #${attempts} at [${this.minWords}, ${this.maxWords}] words failed:  ${this.letters} --> ${this.answers.length} words`);
-			} 
-		}
-
-		if (this.answers[this.minWordLength].length < this.minWords || this.answers[this.minWordLength].length > this.maxWords) {
-			console.log(`\nGave up after 250 attempts to fulfill word range criteria [${this.minWords}, ${this.maxWords}]`);
-		}
+		//if (this.maxWords || this.minWords) {
+		//	while (attempts < 250 && (this.answers.length < this.minWords || this.answers.length > this.maxWords)) {
+		//		this.letters = this.randomizerStrategy.shuffleBoard();
+		//		this.answers = this.solve();
+		//		attempts += 1;
+        //
+		//		console.log(`Attempt #${attempts} at [${this.minWords}, ${this.maxWords}] words failed:  ${this.letters} --> ${this.answers.length} words`);
+		//	}
+		//}
+        //
+		//if (this.answers[this.minWordLength].length < this.minWords || this.answers[this.minWordLength].length > this.maxWords) {
+		//	console.log(`\nGave up after 250 attempts to fulfill word range criteria [${this.minWords}, ${this.maxWords}]`);
+		//}
 	}
 };
 
