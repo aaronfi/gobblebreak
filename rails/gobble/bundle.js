@@ -1,9 +1,8 @@
 
-// TODO 2015.11.01 figure this out!!  This is hacked.
-// I don't know how to get my Node-level modules (require(), module.export =..., etc...) exposed via webpack's output bundle.
-// MAJOR impedance mismatch...
-window.Foo = require("./src/gobble.js");
-// /TODO 
+var dict = require('./src/dictionary.js');
+
+window.Game = require('./src/gobble.js');
+window.Dictionary = new dict();
 
 // TODO consider user of objectAssign npm module / polyfill
 //

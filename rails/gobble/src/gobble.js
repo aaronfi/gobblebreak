@@ -47,7 +47,8 @@ class Gobble {
             maxWords: undefined,
             includeUwithQ: true,
             rejectInvalidGuesses: false,
-            warnOnDuplicateGuess: true
+            warnOnDuplicateGuess: true,
+            dictionary: Dictionary  // a global object,
         }, options);
 
         this.x = options.x;

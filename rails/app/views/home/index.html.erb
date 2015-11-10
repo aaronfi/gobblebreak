@@ -19,23 +19,25 @@
 </div>
 
 <script>
-    var solver;
+    isSolverDone = false;
+    shouldSolverProceed = true;
+
+    var solver = new Worker("/assets/worker.js");
+    solver.onmessage = function(e) {
+        game.answers = e.data;
+        isSolverDone = true;
+        shouldSolverProceed = false;
+    }
+
     var game;
     var shuffleBoard = function() {
         var x = $('#sizex').val();
         var y = $('#sizey').val();
-        game = new Foo({ x: x, y: y });
+        game = new Game({ x: x, y: y });
         $('#board').html(game.toHtml());
-        
-        if (solver) {
-            solver.terminate();
-        }
-        solver = new Worker("/assets/worker.js");
-        solver.onmessage = function(e) {
-            game.answers = e.data;
-            console.log('Answers calculation finished.');
-            console.log(game.answers);
-        }
+
+        isSolverDone = false;
+        shouldSolverProceed = true;
         solver.postMessage([x, y, game.letters]);
     };
 
