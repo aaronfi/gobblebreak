@@ -67,45 +67,7 @@ class Gobble {
         	includeUwithQ: this.includeUwithQ
         });
 
-	    //  0  1  2  3
-	    //  4  5  6  7
-	    //  8  9 10 11
-	    // 12 13 14 15
-	    //
-	    // programmatically construct a list of all neighboring indices for
-	    // each square on our x by y board.
-	    this.board = ((x, y) => {
-	    	let board = [];
-			for(let j = 0; j < y; j++) {
-				for(let i = 0; i < x; i++) {
-			    	let neighbors = [];
-
-			    	let curr = (j*x)+i;
-			    	let n = curr - x;
-			    	let e = curr + 1;
-			    	let s = curr + x;
-			    	let w = curr - 1;
-			    	let ne = n + 1;
-			    	let nw = n - 1;
-			    	let se = s + 1;
-			    	let sw = s - 1;
-
-			    	if (i != x-1) neighbors.push(e);
-					if (i != 0)   neighbors.push(w);
-			    	if (j != y-1) neighbors.push(s);
-					if (j != 0)   neighbors.push(n);
-
-					if (i != 0   && j != 0)   neighbors.push(nw);
-					if (i != x-1 && j != 0)   neighbors.push(ne);
-					if (i != 0   && j != y-1) neighbors.push(sw);
-					if (i != x-1 && j != y-1) neighbors.push(se);
-
-			    	board.push(neighbors.sort((a,b) => a-b));  // built-in sort defaults to alphabetical, not numerical
-	    		}
-	    	}
-
-	    	return board;
-	    })(this.x, this.y);
+		this.board = this._calcNeighbors();
 
 		this.dict = new Dictionary();
 
@@ -122,11 +84,54 @@ class Gobble {
         this.eventLog = new EventLog();
     }
 
-    // TODO this is broken;  isn't recalculating full board nieghobrs.  should make use of a reset() function ?
-    resize(options) {
+	// board square indexing scheme, e.g. for a 4x4 board:
+	//
+	//  0  1  2  3
+	//  4  5  6  7
+	//  8  9 10 11
+	// 12 13 14 15
+	//
+	// programmatically construct a list of all neighboring indices for each square on our x by y board.
+	_calcNeighbors(x = this.x, y = this.y) {
+		let board = [];
+		for(let j = 0; j < y; j++) {
+			for(let i = 0; i < x; i++) {
+				let neighbors = [];
+
+				let curr = (j*x)+i;
+				let n = curr - x;
+				let e = curr + 1;
+				let s = curr + x;
+				let w = curr - 1;
+				let ne = n + 1;
+				let nw = n - 1;
+				let se = s + 1;
+				let sw = s - 1;
+
+				if (i != x-1) neighbors.push(e);
+				if (i != 0)   neighbors.push(w);
+				if (j != y-1) neighbors.push(s);
+				if (j != 0)   neighbors.push(n);
+
+				if (i != 0   && j != 0)   neighbors.push(nw);
+				if (i != x-1 && j != 0)   neighbors.push(ne);
+				if (i != 0   && j != y-1) neighbors.push(sw);
+				if (i != x-1 && j != y-1) neighbors.push(se);
+
+				board.push(neighbors.sort((a,b) => a-b));  // built-in sort defaults to alphabetical, not numerical
+			}
+		}
+
+		return board;
+	}
+
+	resize(options) {
         this.x = options.x;
         this.y = options.y;
-        this.randomizerStrategy.x = options.x;
+
+		this.board = this._calcNeighbors();
+
+		this.randomizerStrategy.x = options.x;
         this.randomizerStrategy.y = options.y;
 
         this.eventLog = new EventLog();
@@ -222,7 +227,9 @@ class Gobble {
     }
 
     scoreGuesses() {
-    	let score = 0;
+		// TODOrefcator this method to use this.answers, not our dictoinary object/worker thread...
+
+		let score = 0;
     	this.guesses.forEach(guess => {
     		if (this.isLegalWord(guess)) {
     			score += this.scoreGuess(guess);
