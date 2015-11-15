@@ -2,11 +2,36 @@
 <div class="container" id="topContainer">
     <div class="col-sm-2">
         <div class="inputs">
-            <div class="input-group spinner">
+            <div class="input-group">
                 <span class="input-group-addon" id="size">Size</span>
                 <input type="text" class="form-control" id="sizex" value="4" tabindex=1>
                 <span class="input-group-addon">by</span>
                 <input type="text" class="form-control" id="sizey" value="4" tabindex=2>
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="size">Minimum word length</span>
+                <input type="text" class="form-control" id="wordlen" value="3" tabindex=3>
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="size">Timer</span>
+                <input type="text" class="form-control" id="timer" value="3:00" tabindex=4>
+            </div>
+
+            <div class="input-group">
+                <label class="c-input c-checkbox">
+                    <input type="checkbox" id="autoreject">
+                    <span class="c-indicator">Immediately reject bad guesses</span>
+                </label>
+            </div>
+
+            <div class="input-group">
+                <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
+            </div>
+
+            <div class="input-group">
+                <button type="button" class="btn btn-primary btn-lg btn-block">Start</button>
             </div>
         </div>
     </div>
@@ -19,26 +44,53 @@
 </div>
 
 <script>
-    isSolverDone = false;
-    shouldSolverProceed = true;
+    $('#ex1').slider({
+        formatter: function(value) {
+            return value;
+        }
+    });
 
-    var solver = new Worker("/assets/worker.js");
-    solver.onmessage = function(e) {
-        game.answers = e.data;
-        isSolverDone = true;
-        shouldSolverProceed = false;
-    }
+    var word = [];
+    var swipeHandler = function() {
+        $(function() {
+            var isMouseDown = false;
 
-    var game;
+            $('.square')
+                .mousedown(function () {
+                    isMouseDown = true;
+                    $(this).addClass("highlighted");
+                    word.push($(this).find('span').data('squareId'));
+                    return false; // prevent text selection
+                })
+                .mouseover(function () {
+                    if (isMouseDown && ! $(this).hasClass('highlighted')) {
+                        $(this).addClass("highlighted");
+                        word.push($(this).find('span').data('squareId'));
+                    }
+                })
+                .bind("selectstart", function () {
+                    return false;
+                });
+
+            $(document)
+                .mouseup(function () {
+                    isMouseDown = false;
+                    game.submitWord(word);
+                    word = [];
+                    $('.square').removeClass('highlighted');
+                    console.log(game.guesses);
+                });
+        });
+    };
+
+    var game = new Game();
     var shuffleBoard = function() {
         var x = $('#sizex').val();
         var y = $('#sizey').val();
-        game = new Game({ x: x, y: y });
+        game.resize({ x: x, y: y });
         $('#board').html(game.toHtml());
 
-        isSolverDone = false;
-        shouldSolverProceed = true;
-        solver.postMessage([x, y, game.letters]);
+        swipeHandler();
     };
 
     shuffleBoard();

@@ -35,7 +35,8 @@ const EventLog = require('./../src/event_log');
 // TODO show progress bar of words found
 //
 // TODO let user decide if words are rejected immediately, or scored immediately
-
+//
+// TODO add a pause button that when clicked, obscures the board
 class Gobble {
 
     constructor(options = {}) {
@@ -51,8 +52,8 @@ class Gobble {
             dictionary: Dictionary  // a global object,
         }, options);
 
-        this.x = options.x;
-        this.y = options.y;
+        this.x = Number(options.x);
+        this.y = Number(options.y);
         this.minWordLength = options.minWordLength;
         this.minWords = options.minWords;
         this.maxWords = options.maxWords;
@@ -92,7 +93,7 @@ class Gobble {
 	// 12 13 14 15
 	//
 	// programmatically construct a list of all neighboring indices for each square on our x by y board.
-	_calcNeighbors(x = this.x, y = this.y) {
+	_calcNeighbors(x = Number(this.x), y = Number(this.y)) {
 		let board = [];
 		for(let j = 0; j < y; j++) {
 			for(let i = 0; i < x; i++) {
@@ -126,14 +127,15 @@ class Gobble {
 	}
 
 	resize(options) {
-        this.x = options.x;
-        this.y = options.y;
+        this.x = Number(options.x);
+        this.y = Number(options.y);
 
 		this.board = this._calcNeighbors();
 
 		this.randomizerStrategy.x = options.x;
         this.randomizerStrategy.y = options.y;
 
+        // TODO confirm...
         this.eventLog = new EventLog();
 
         this.shuffleBoard();
@@ -145,7 +147,8 @@ class Gobble {
     	for(let i = 1; i < moves.length; i++) {
     		if (this.board[moves[i-1]].indexOf(moves[i]) === -1) {
 				this.eventLog.add(`User submission had invalid adjacency: ${moves}:  no way to reach ${moves[i]} from ${moves[i-1]}`);
-				return;
+				debugger;
+                return;
     		}
     	}
 
@@ -247,7 +250,7 @@ class Gobble {
             for (let i = 0; i < this.x; i++) {
                 let curr = (j * this.x) + i;
 
-                result += `<div class="square"><div><span id="sq${curr}">`;
+                result += `<div class="square"><div><span id="sq${curr}" data-square-id="${curr}">`;
                 if (this.letters[curr] === '.') {
                     result += 'Qu';
                 } else {
@@ -386,8 +389,10 @@ class Gobble {
 		let attempts = 0;
 
 		this.letters = this.randomizerStrategy.shuffleBoard();
-//		this.answers = this.solve();
-
+		setTimeout(() => {
+            this.answers = this.solve();
+            console.log(`${this.x}x${this.y}: ${this.answers.length}`);
+        }, 0);
 		//if (this.maxWords || this.minWords) {
 		//	while (attempts < 250 && (this.answers.length < this.minWords || this.answers.length > this.maxWords)) {
 		//		this.letters = this.randomizerStrategy.shuffleBoard();

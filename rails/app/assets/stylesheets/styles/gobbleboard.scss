@@ -1,0 +1,93 @@
+.square {
+    // disable any native browser highlighting -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    background-color: white;
+
+    text-align: center;
+    border-radius: 20%;
+    border: 1mm solid black;
+    font-family: verdana, arial, sans-serif;
+    font-weight: bold;
+    font-size: 23px;
+
+    display: table-cell;
+    height: 56px;
+    width: 56px;
+
+    cursor: pointer;
+
+    div {
+        display: table;
+        width: 100%;
+        height: 100%;
+    }
+
+    span {
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+    }
+}
+
+.highlighted {
+    background-color: lightblue;
+}
+
+.inputs {
+    display: inline-block;
+    margin-top: rem-calc(90);
+
+    .input-group {
+        padding-top: rem-calc(10);
+
+        .input-group-addon {
+            width: inherit;
+        }
+
+        .form-control {
+            width: rem-calc(48);
+            text-align: center;
+        }
+
+        #timer {
+            width: rem-calc(72);
+        }
+
+        .c-input {
+            white-space: nowrap;
+
+            .c-indicator {
+                font-size: 100%
+            }
+        }
+    }
+}
+
+.board {
+    border: 1mm solid transparent;
+    margin-top: rem-calc(70);
+    display: inline-block;
+}
+
+.clearfix {
+    clear: both;
+}
+
+.row {
+    white-space: nowrap;
+    margin: 0;
+}
+
+.ui-resizable-se {
+    background-color: white;
+}
+
+#resizable {
+    padding: 0.5rem;
+    display: inline-block;
+}
