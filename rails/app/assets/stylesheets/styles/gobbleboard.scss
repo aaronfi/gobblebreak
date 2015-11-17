@@ -1,12 +1,4 @@
-@mixin disable-text-selection() {
-    // disable any native browser highlighting -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
+@import 'base/shared';
 
 #resizable {
     padding: 0.5rem;
@@ -18,6 +10,7 @@
         padding: rem-calc(70) 0 0 0;
         font-size: rem-calc(23);
         color: white;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     }
 
     .resizable-arrow {
@@ -27,6 +20,8 @@
         color: white;
         background-image: none;
         display: inline-block;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        margin-left: rem-calc(-32);
     }
 
     .board {
@@ -100,6 +95,32 @@
             }
         }
     }
+
+    .word-completion-slider {
+        display: inline-block;
+        vertical-align: top;
+        margin-top: rem-calc(20);
+
+        .slider {
+            padding-left: rem-calc(35);
+        }
+
+        .slider-selection {
+            background: #BABABA;
+        }
+
+        .slider-handle {
+            cursor: auto;
+
+            &.min-slider-handle {
+                background: green;
+            }
+        }
+
+        .slider-track-high {
+            background-color: green;
+        }
+    }
 }
 
 .inputs {
@@ -129,6 +150,43 @@
                 font-size: 100%
             }
         }
+
+        &.min-max-words {
+            .input-group {
+                width: 100%;
+                .form-control {
+                    width: rem-calc(64);
+                }
+            }
+            .input-group:first-child {
+                .input-group-addon:first-child {
+                    border-radius: 0.25rem 0 0 0;
+                }
+
+                .input-group-addon:last-child {
+                    border-radius: 0 0.25rem 0 0;
+                }
+            }
+            .input-group:last-child {
+                padding-top: 0;
+
+                .input-group-addon:first-child {
+                    border-radius: 0 0 0 0.25rem;
+                }
+
+                .input-group-addon:last-child {
+                    border-radius: 0 0 0.25rem 0;
+                }
+            }
+        }
+
+        &.min-max-words-slider {
+            padding-bottom: rem-calc(10);
+
+            .slider-track-low, .slider-track-high {
+                background: #BABABA;
+            }
+        }
     }
 }
 
@@ -140,8 +198,4 @@
     background-color: transparent;
     border: none;
     background:transparent;
-}
-
-.ui-resizable-se {
-    background-color: white;
 }

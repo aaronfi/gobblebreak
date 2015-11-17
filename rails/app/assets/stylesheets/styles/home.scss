@@ -1,6 +1,7 @@
 
 @import 'foundation/functions';  // gives us rem-calc()
 @import 'jquery.ui.resizable.css';
+@import 'base/shared';
 
 // NOTE: this disables the "bounce" in modern browsers when scrolling past page top or bottom.  http://stackoverflow.com/questions/12046315/prevent-overscrolling-of-web-page
 // It also ensures that the web browser's scrollbar (when scrolling) isn't drawn over the header and footer
@@ -13,6 +14,8 @@ body > div#topContainer {
     height: 100%;
     overflow: scroll;
     -webkit-overflow-scrolling: touch;
+
+    @include disable-text-selection;
 }
 // /NOTE
 
@@ -36,11 +39,18 @@ html {
 }
 
 .navbar {
+    @include disable-text-selection;
+
     padding: rem-calc(0 0 0 16);
 }
 
 .navbar-brand {
-    font-weight:bolder;
+    font-weight: bolder;
+
+    img {
+        height: rem-calc(60);
+        display: inline-block;
+    }
 }
 
 .navbar-default {

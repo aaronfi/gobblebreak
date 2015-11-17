@@ -4,19 +4,36 @@
         <div class="inputs">
             <div class="input-group">
                 <span class="input-group-addon" id="size">Size</span>
-                <input type="text" class="form-control" id="sizex" value="4" tabindex=1>
+                <input type="text" class="form-control" id="sizex" tabindex=1>
                 <span class="input-group-addon">by</span>
-                <input type="text" class="form-control" id="sizey" value="4" tabindex=2>
+                <input type="text" class="form-control" id="sizey" tabindex=2>
+            </div>
+
+            <div class="input-group min-max-words">
+                <div class="input-group">
+                    <span class="input-group-addon">At least</span>
+                    <input type="text" class="form-control" id="minwords" tabindex=3>
+                    <span class="input-group-addon">words</span>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">At most</span>
+                    <input type="text" class="form-control" id="maxwords" tabindex=4>
+                    <span class="input-group-addon">words</span>
+                </div>
+            </div>
+
+            <div class="input-group min-max-words-slider">
+                <input id="minMaxWordsSlider" data-slider-id='minMaxWordsSlider' type="text" data-slider-min="0" data-slider-max="9999" data-slider-step="1" data-slider-value="0" />
             </div>
 
             <div class="input-group">
                 <span class="input-group-addon" id="size">Minimum word length</span>
-                <input type="text" class="form-control" id="wordlen" value="3" tabindex=3>
+                <input type="text" class="form-control" id="minwordlen" tabindex=5>
             </div>
 
             <div class="input-group">
                 <span class="input-group-addon" id="size">Timer</span>
-                <input type="text" class="form-control" id="timer" value="3:00" tabindex=4>
+                <input type="text" class="form-control" id="timer" value="3:00" tabindex=6>
             </div>
 
             <div class="input-group">
@@ -27,11 +44,9 @@
             </div>
 
             <div class="input-group">
-                <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
-            </div>
+                <button type="button" class="btn btn-secondary btn-lg" id="shuffle">Shuffle</button>
 
-            <div class="input-group">
-                <button type="button" class="btn btn-primary btn-lg btn-block">Start</button>
+                <button type="button" class="btn btn-primary btn-lg" id="start">Start</button>
             </div>
         </div>
     </div>
@@ -39,20 +54,75 @@
     <div class="col-sm-10">
         <div class="ui-widget-content ui-resizable" id="resizable">
             <div class="draggable-arrow"><i class="fa fa-arrows"></i></div>
+
             <div id="board" class="board"></div>
+
+            <div class="input-group word-completion-slider">
+                <input id="wordCompletionSlider" data-slider-id='wordCompletionSlider' type="text" />
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    $('#ex1').slider({
-        formatter: function(value) {
-            return value;
+
+    //
+    // helper functions
+    //
+
+    var drawWordCompletionSlider = function() {
+        var timer = setInterval(function() {
+            if (wordCompletionSlider && game.answers[game.minWordLength]) {
+                var numAnswers = game.answers[game.minWordLength].length;
+                wordCompletionSlider.slider('setAttribute', 'max', numAnswers).slider('refresh');
+                clearInterval(timer);
+            }
+        }, 250);
+
+        $('#wordCompletionSlider').css({ 'height': $('#board').height() - 1.5*parseInt($("#board").css("margin-bottom")) });
+    }
+    var drawBoard = function() {
+        $(".square").css({
+            'font-size': (game.size * 0.5) + 'px',
+            'width': game.size + 'px',
+            'height': game.size + 'px',
+            'border-width': game.size < 45 ? '1px' : '1mm'
+        });
+        $(".outer-square").css({
+            'font-size': (game.size * 0.5) + 'px',
+            'width': game.size + 'px',
+            'height': game.size + 'px',
+            'border-width': game.size < 45 ? '1px' : '1mm',
+            'padding': (game.size * 0.2) + 'px'
+        });
+
+        drawWordCompletionSlider();
+
+        // for some reason, these two commands are necessary;  otherwise the resize triangle can end up misaligned.
+        $('#resizable').css('height', '');
+        $('#resizable').css('width', '');
+
+        window.location.hash = game.toHtmlAnchor();
+    };
+    var centerBoard = function() {
+        $('#resizable').position({
+            my: 'bottom',
+            at: 'center',
+            of: '#topContainer'
+        }).css({'top': '0'});
+    };
+    var shuffleBoard = function() {
+        var x = $('#sizex').val();
+        var y = $('#sizey').val();
+        if (x !== game.x || y !== game.y) {
+            game.resize({ x: x, y: y });
+            $('#board').html(game.toHtml());
+            drawWordCompletionSlider();
+
+            swipeHandler();
+            window.location.hash = game.toHtmlAnchor();
         }
-    });
-
-    var word = [];
-
+    };
     var swipeHandler = function() {
         $(function() {
             var isMouseDown = false;
@@ -106,6 +176,8 @@
                 .mouseup(function() {
                     isMouseDown = false;
                     game.submitWord(word);
+                    var numAnswers = game.answers[game.minWordLength].length;
+                    wordCompletionSlider.slider('setValue', [game.correctGuesses.size, numAnswers]);
                     word = [];
                     $('.outer-square').removeClass('highlighted');
                     $('.outer-square').css('border-color', 'black');
@@ -115,25 +187,26 @@
         });
     };
 
-    var game = new Game();
-    game.size = 35;
-    var shuffleBoard = function() {
-        var x = $('#sizex').val();
-        var y = $('#sizey').val();
-        game.resize({ x: x, y: y });
-        $('#board').html(game.toHtml());
+    //
+    // init Game object and then render it
+    //
 
-        swipeHandler();
-    };
-
-    shuffleBoard();
-
+    var word = [];
+    var game = new Game({ htmlAnchor: window.location.hash });
     $('#board').html(game.toHtml());
-    $('#resizable').position({
-        my: 'bottom',
-        at: 'center',
-        of: '#topContainer'
-    }).css({ 'top': '0' });
+    swipeHandler();
+    drawBoard();
+    centerBoard();
+
+    $('#sizex').val(game.x);
+    $('#sizey').val(game.y);
+    $('#minwords').val(game.minWords);
+    $('#maxwords').val(game.maxWords === 0 ? 'any' : game.maxWords);
+    $('#minwordlen').val(game.minWordLength);
+
+    //
+    // snazzy keyboard controls
+    //
 
     var incr_x = function() {
         $('#sizex').val(parseInt($('#sizex').val(), 10) + 1);
@@ -152,93 +225,278 @@
         shuffleBoard();
     }
 
+    // global key binding
+    $(window).bind('keydown', function(e) {
+        switch (e.keyCode) {
+            case 13:  // enter key
+            case 32:  // space bar
+                e.preventDefault();
+                shuffleBoard();
+                centerBoard();
+                e.stopPropagation();
+                break;
+            case 37:
+                e.preventDefault();
+                decr_x();
+                centerBoard();
+                e.stopPropagation();
+                break;
+            case 38:
+                e.preventDefault();
+                decr_y();
+                centerBoard();
+                e.stopPropagation();
+                break;
+            case 39:
+                e.preventDefault();
+                incr_x();
+                centerBoard();
+                e.stopPropagation();
+                break;
+            case 40:
+                e.preventDefault();
+                incr_y();
+                centerBoard();
+                e.stopPropagation();
+                break;
+            default:
+                break;
+        }
+    });
+
+    // board size input fields -- up/down arrows only
     $('#sizex').bind('keydown', function(e) {
             switch (e.keyCode) {
+                case 13:  // enter key
+                case 32:  // space bar
                 case 37:
+                case 39:
                     e.preventDefault();
-                    decr_y();
+                    e.stopPropagation();
                     break;
                 case 38:
                     e.preventDefault();
                     incr_x();
-                    break;
-                case 39:
-                    e.preventDefault();
-                    incr_y();
+                    e.stopPropagation();
                     break;
                 case 40:
                     e.preventDefault();
                     decr_x();
+                    e.stopPropagation();
                     break;
                 default:
+                    break;
             }
         });
-    $('#sizex').change(shuffleBoard);
-
+    $('#sizex').change(function() {
+        shuffleBoard();
+        centerBoard();
+    });
     $('#sizey').bind('keydown', function(e) {
             switch (e.keyCode) {
+                case 13:  // enter key
+                case 32:  // space bar
                 case 37:
+                case 39:
                     e.preventDefault();
-                    decr_x();
+                    e.stopPropagation();
                     break;
                 case 38:
                     e.preventDefault();
                     incr_y();
-                    break;
-                case 39:
-                    e.preventDefault();
-                    incr_x();
+                    e.stopPropagation();
                     break;
                 case 40:
                     e.preventDefault();
                     decr_y();
+                    e.stopPropagation();
                     break;
                 default:
+                    break;
             }
         });
-    $('#sizey').change(shuffleBoard);
+    $('#sizey').change(function() {
+        shuffleBoard();
+        centerBoard();
+    });
+
+    // min/max words slider and input fields -- up/down arrows only
+    var isSliding = false;
+    var minMaxWordsSlider_maxValue = 1000;
+    var minMaxWordsSlider = $('#minMaxWordsSlider')
+        .slider({
+            min: 0,
+            max: minMaxWordsSlider_maxValue,
+            range: true,
+            tooltip: 'hide',
+            value: [0, minMaxWordsSlider_maxValue]
+        }).on('slide', function(e) {
+            $('#minwords').val(e.value[0]);
+            $('#maxwords').val(e.value[1] === minMaxWordsSlider_maxValue ? 'any' : e.value[1]);
+        }).on('slideStart', function() {
+            isSliding = true;
+        }).on('slideStop', function() {
+            isSliding = false;
+            game.minWords = Number($('#minwords').val());
+            var max = $('#maxwords').val();
+            game.maxWords = max === 'any' ? 0 : Number(max);
+            window.location.hash = game.toHtmlAnchor();
+        });
+
+    $('#minwords').change(function() {
+        if (!isSliding) {
+            var min = Number($(this).val());
+            var max = Number($('#maxwords').val());
+            if (min > max) {
+                var temp = min;
+                min = max;
+                max = temp;
+                $('#minwords').val(min);
+                $('#maxwords').val(max);
+            }
+            minMaxWordsSlider.slider('setValue', [min, max]);
+            game.minWords = Number($('#minwords').val());
+            var max = $('#maxwords').val();
+            game.maxWords = max === 'any' ? 0 : Number(max);
+            window.location.hash = game.toHtmlAnchor();
+        }
+    });
+    $('#maxwords').change(function() {
+        if (!isSliding) {
+            var min = Number($('#minwords').val());
+            var max = Number($(this).val());
+            if (max === minMaxWordsSlider_maxValue) {
+                $('#maxwords').val('any');
+            } else if (min > max) {
+                var temp = min;
+                min = max;
+                max = temp;
+                $('#minwords').val(min);
+                $('#maxwords').val(max);
+            }
+            minMaxWordsSlider.slider('setValue', [min, max]);
+            game.minWords = Number($('#minwords').val());
+            var max = $('#maxwords').val();
+            game.maxWords = max === 'any' ? 0 : Number(max);
+            window.location.hash = game.toHtmlAnchor();
+        }
+    });
+    var decr_min = function() {
+        var min = Math.max(0, parseInt($('#minwords').val(), 10) - 1);
+        var max = Number($('#maxwords').val());
+        $('#minwords').val(min);
+        minMaxWordsSlider.slider('setValue', [min, max]);
+    }
+    var incr_min = function() {
+        var min = Math.max(0, parseInt($('#minwords').val(), 10) + 1);
+        var max = Number($('#maxwords').val());
+        $('#minwords').val(min);
+        minMaxWordsSlider.slider('setValue', [min, max]);
+    }
+    var decr_max = function() {
+        var min = Number($('#minwords').val());
+        var max = Math.max(0, parseInt($('#maxwords').val(), 10) - 1);
+        $('#maxwords').val(max);
+        minMaxWordsSlider.slider('setValue', [min, max]);
+    }
+    var incr_max = function() {
+        var min = Number($('#minwords').val());
+        var max = Math.max(0, parseInt($('#maxwords').val(), 10) + 1);
+        $('#maxwords').val(max);
+        minMaxWordsSlider.slider('setValue', [min, max]);
+    }
+    $('#minwords').bind('keydown', function(e) {
+        switch (e.keyCode) {
+            case 13:  // enter key
+            case 32:  // space bar
+            case 37:
+            case 39:
+                e.preventDefault();
+                e.stopPropagation();
+                break;
+            case 38:
+                e.preventDefault();
+                incr_min();
+                e.stopPropagation();
+                break;
+            case 40:
+                e.preventDefault();
+                decr_min();
+                e.stopPropagation();
+                break;
+            default:
+                break;
+        }
+    });
+    $('#maxwords').bind('keydown', function(e) {
+        switch (e.keyCode) {
+            case 13:  // enter key
+            case 32:  // space bar
+            case 37:
+            case 39:
+                e.preventDefault();
+                e.stopPropagation();
+                break;
+            case 38:
+                e.preventDefault();
+                incr_max();
+                e.stopPropagation();
+                break;
+            case 40:
+                e.preventDefault();
+                decr_max();
+                e.stopPropagation();
+                break;
+            default:
+                break;
+        }
+    });
+
+
+    // game progression bar
+    var wordCompletionSlider = $('#wordCompletionSlider')
+        .slider({
+            min: 0,
+            max: -1,
+            range: true,
+            tooltip: 'always',
+            value: 0,
+            reversed: true,
+            orientation: 'vertical',
+            step: 1,
+            enabled : false,
+            tooltip_split: true
+        });
+    drawWordCompletionSlider();
+
+    //
+    // initialize board resizing
+    //
 
     $('#resizable').resizable({
         start: function(event, ui) {
             $('#board').css({ 'border-color': 'blue' });
+            $('.resizable-arrow i').css({ 'color': 'blue' });
         },
         resize: function(event, ui) {
             $('#board').css({ 'border-color': 'blue' });
+            $('.resizable-arrow i').css({ 'color': 'blue' });
 
-var old = game.size;
-            game.size = ~~ Math.min(ui.size.height, ui.size.width) / (1.7 * Math.max(game.x, game.y));
-console.log(ui.size.height + " " +ui.size.width + " " + old + " " + game.size);
-
-            $(".square").css({
-                'font-size': (game.size * 0.5) + 'px',
-                'width': game.size + 'px',
-                'height': game.size + 'px',
-                'border-width': game.size < 45 ? '1px' : '1mm'
-            });
-            $(".outer-square").css({
-                'font-size': (game.size * 0.5) + 'px',
-                'width': game.size + 'px',
-                'height': game.size + 'px',
-                'border-width': game.size < 45 ? '1px' : '1mm',
-                'padding': (game.size * 0.2) + 'px'
-            });
-
-            // for some reason, these two commands are necessary;  otherwise the resize triangle can end up misaligned.
-            $('#resizable').css('height', '');
-            $('#resizable').css('width', '');
+            game.size = Math.round(Math.min(ui.size.height, ui.size.width) / (1.7 * Math.max(game.x, game.y)));
+            drawBoard();
         },
         stop: function(event, ui) {
             $('#board').css({ 'border-color': 'transparent' });
+            $('.resizable-arrow i').css({ 'color': 'white' });
+            window.location.hash = game.toHtmlAnchor();
         },
         aspectRatio: true,
         handles: "nw, se"
     });
-
     $('#resizable .ui-icon-gripsmall-diagonal-se')
         .addClass('resizable-arrow')  // slight stylistic change, adding a better "click-drag" icon
         .removeClass('ui-icon-gripsmall-diagonal-se ui-resizable-handle ui-resizable-se ui-icon')
         .append('<i class="fa fa-arrows-alt"></i>');
-
     $('#resizable .fa-arrows-alt')
         .hover(
             function() {
@@ -258,6 +516,10 @@ console.log(ui.size.height + " " +ui.size.width + " " + old + " " + game.size);
             $('#board').css({ 'border-color': 'transparent' });
             $(this).css({ 'color': 'white' });
         });
+
+    //
+    // initialize board dragging
+    //
 
     $('#resizable').draggable({
         handle: 'i.fa-arrows',
@@ -284,8 +546,9 @@ console.log(ui.size.height + " " +ui.size.width + " " + old + " " + game.size);
             }
         );
 
-
-
+    //
+    // marquee welcoming text
+    //
 
     var e;
     $(window).load(function() {
@@ -333,7 +596,7 @@ console.log(ui.size.height + " " +ui.size.width + " " + old + " " + game.size);
             };
 
             n = $('<span class="text" />');
-            i = ["Fancy a ", "game?"];
+            i = ["Fancy a ", "game,  you turkey?"];
 
             r.append(n).append(e);
             $(".jqconsole-cursor").fadeIn();
@@ -352,7 +615,7 @@ console.log(ui.size.height + " " +ui.size.width + " " + old + " " + game.size);
                                         $(".jqconsole-cursor").fadeIn();
                                         return setTimeout(function () {
                                             p();
-                                        }, 2500);
+                                        }, 4000);
                                     }, 300);
                                 }, 100);
                             });

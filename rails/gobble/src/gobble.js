@@ -41,19 +41,36 @@ class Gobble {
 
     constructor(options = {}) {
         options = Object.assign({}, {
+            htmlAnchor: undefined,
             x: 4,
             y: 4,
             minWordLength: 3,
-            minWords: undefined,
-            maxWords: undefined,
+            minWords: 0,
+            maxWords: 0,
             includeUwithQ: true,
             rejectInvalidGuesses: false,
             warnOnDuplicateGuess: true,
-            dictionary: Dictionary  // a global object,
+            dictionary: Dictionary,  // a global object,
+            size: 35
         }, options);
+
+        // #<x>x<y>,<letters>,<minWordLength>,<minWords>,<maxWords>,<pixelSize> TODO add rest of params
+        // #7x4,arisnnblintdalinhhidaeewvdil,3,0,0,45
+        if (options.htmlAnchor) {
+            let vals = options.htmlAnchor.split(',');
+            let sizes = vals[0].split('x');
+            options.x = Number(sizes[0].substring(1));  // remove leading #
+            options.y = Number(sizes[1]);
+            options.letters = vals[1];
+            options.minWordLength = Number(vals[2]);
+            options.minWords = Number(vals[3]);
+            options.maxWords = Number(vals[4]);
+            options.size = Number(vals[5]);
+        }
 
         this.x = Number(options.x);
         this.y = Number(options.y);
+        this.size = Number(options.size);  // pixel length of a letter's square on the board
         this.minWordLength = options.minWordLength;
         this.minWords = options.minWords;
         this.maxWords = options.maxWords;
@@ -73,11 +90,15 @@ class Gobble {
 		this.dict = new Dictionary();
 
 		this.guesses = new Set();
+        this.correctGuesses = new Set();
 
         this.answers = [];
 
 		if (options.letters) {
 		    this.letters = options.letters;
+            setTimeout(() => {
+                this.answers = this.solve();
+            }, 0);
 		} else {
 			this.shuffleBoard();
 		}
@@ -127,6 +148,8 @@ class Gobble {
 	}
 
 	resize(options) {
+        this.answers = [];
+
         this.x = Number(options.x);
         this.y = Number(options.y);
 
@@ -147,7 +170,6 @@ class Gobble {
     	for(let i = 1; i < moves.length; i++) {
     		if (this.board[moves[i-1]].indexOf(moves[i]) === -1) {
 				this.eventLog.add(`User submission had invalid adjacency: ${moves}:  no way to reach ${moves[i]} from ${moves[i-1]}`);
-				debugger;
                 return;
     		}
     	}
@@ -165,6 +187,11 @@ class Gobble {
 			}
     	} else {
 	    	this.guesses.add(word);
+
+            if (this.answers[this.minWordLength].indexOf(word) !== -1) {
+                this.correctGuesses.add(word);
+            }
+
 	    	this.eventLog.add(`User guessed the word: ${word}`);
 	    }
     }
@@ -254,7 +281,7 @@ class Gobble {
                 if (this.letters[curr] === '.') {
                     result += 'Qu';
                 } else {
-                    result += this.letters[curr].toUpperCase();
+                    result += this.letters[curr] ? this.letters[curr].toUpperCase() : 'x';
                 }
                 result += `</span></div></div></div>`;
             }
@@ -264,6 +291,11 @@ class Gobble {
 
         return result;
 	}
+
+    //TODO game.size doesn't really belong as a uniquely defining characteristic of an instance of a game
+    toHtmlAnchor() {
+        return `${this.x}x${this.y},${this.letters},${this.minWordLength},${this.minWords},${this.maxWords},${this.size}`;
+    }
 
     toString() {
     	let result = '\n+-' + '---'.repeat(this.x) + '+\n';
@@ -392,20 +424,41 @@ class Gobble {
 		setTimeout(() => {
             this.answers = this.solve();
             console.log(`${this.x}x${this.y}: ${this.answers.length}`);
+
+            if (this.maxWords > 0 || this.minWords > 0) {
+                while (attempts < 100 && (this.answers[this.minWordLength].length < this.minWords ||
+                    (this.maxWords > 0 && this.answers[this.minWordLength].length > this.maxWords)))
+                {
+                    this.letters = this.randomizerStrategy.shuffleBoard();
+                    this.answers = this.solve();
+                    attempts += 1;
+
+                    if (this.maxWords > 0) {
+                        let delta = this.answers[this.minWordLength].length - this.maxWords;
+                        if (delta > 0) {
+                            $('#stdout').text(`Shuffle attempt #${attempts} failed, ${delta} too many words.`);
+                        } else {
+                            $('#stdout').text('');
+                        }
+                    } else if (this.minWords > 0) {
+                        let delta = this.minWords - this.answers[this.minWordLength].length;
+                        if (delta > 0) {
+                            $('#stdout').text(`Shuffle attempt #${attempts} failed, ${delta} too few words.`);
+                        } else {
+                            $('#stdout').text('');
+                        }
+                    }
+                }
+            }
+
+            if (this.answers[this.minWordLength].length < this.minWords ||
+                (this.maxWords > 0 && this.answers[this.minWordLength].length > this.maxWords))
+            {
+                $('#stdout').text(`Gave up shuffling after 100 attempts [${this.minWords}, ${this.maxWords}]`);
+            } else {
+                $('#stdout').text('');
+            }
         }, 0);
-		//if (this.maxWords || this.minWords) {
-		//	while (attempts < 250 && (this.answers.length < this.minWords || this.answers.length > this.maxWords)) {
-		//		this.letters = this.randomizerStrategy.shuffleBoard();
-		//		this.answers = this.solve();
-		//		attempts += 1;
-        //
-		//		console.log(`Attempt #${attempts} at [${this.minWords}, ${this.maxWords}] words failed:  ${this.letters} --> ${this.answers.length} words`);
-		//	}
-		//}
-        //
-		//if (this.answers[this.minWordLength].length < this.minWords || this.answers[this.minWordLength].length > this.maxWords) {
-		//	console.log(`\nGave up after 250 attempts to fulfill word range criteria [${this.minWords}, ${this.maxWords}]`);
-		//}
 	}
 };
 
