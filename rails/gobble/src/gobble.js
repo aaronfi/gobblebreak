@@ -165,7 +165,6 @@ class Gobble {
     }
 
     submitWord(moves /* array of board index values */) {
-
     	// verify adjacency of submitted moves
     	for(let i = 1; i < moves.length; i++) {
     		if (this.board[moves[i-1]].indexOf(moves[i]) === -1) {
@@ -350,14 +349,6 @@ class Gobble {
         return this.toString();
     }
 
-    clear() {
-        // TODO
-    }
-
-    reset() {
-        // TODO
-    }
-	
 	solve(letters) {
 		const currentLetters = this.letters;
 		if (letters) {
@@ -378,7 +369,7 @@ class Gobble {
 
 			if (this.words.size > 0) {
 				answers[this.minWordLength] = [...this.words].sort();
-				this.minWordLength++;
+                this.minWordLength++;
 			} else {
 				this.minWordLength = originalMinWordLength;
 				if (letters) {  // restore our original letters
@@ -405,6 +396,7 @@ class Gobble {
 	 		if (! visited[i]) {
 	 			visited[i] = true;
 	 			this._solve(i, visited.slice(), candidate + (this.letters[i] === '.' ? 'Qu' : this.letters[i]));
+                visited[i] = false;  // back out one step of our depth first search
 	 		}
 	 	});
 	}
@@ -426,35 +418,39 @@ class Gobble {
             console.log(`${this.x}x${this.y}: ${this.answers.length}`);
 
             if (this.maxWords > 0 || this.minWords > 0) {
-                while (attempts < 100 && (this.answers[this.minWordLength].length < this.minWords ||
+                while (attempts < 25 && (this.answers[this.minWordLength].length < this.minWords ||
                     (this.maxWords > 0 && this.answers[this.minWordLength].length > this.maxWords)))
                 {
                     this.letters = this.randomizerStrategy.shuffleBoard();
                     this.answers = this.solve();
                     attempts += 1;
 
+                    let message;
                     if (this.maxWords > 0) {
                         let delta = this.answers[this.minWordLength].length - this.maxWords;
                         if (delta > 0) {
-                            $('#stdout').text(`Shuffle attempt #${attempts} failed, ${delta} too many words.`);
+                            message = `Shuffle attempt #${attempts} failed, ${delta} too many words.`;
                         } else {
-                            $('#stdout').text('');
+                            message = '';
                         }
                     } else if (this.minWords > 0) {
                         let delta = this.minWords - this.answers[this.minWordLength].length;
                         if (delta > 0) {
-                            $('#stdout').text(`Shuffle attempt #${attempts} failed, ${delta} too few words.`);
+                            message = `Shuffle attempt #${attempts} failed, ${delta} too few words.`;
                         } else {
-                            $('#stdout').text('');
+                            message = '';
                         }
                     }
+
+                    $('#stdout').text(message);
+                    console.log("message: " + message);
                 }
             }
 
             if (this.answers[this.minWordLength].length < this.minWords ||
                 (this.maxWords > 0 && this.answers[this.minWordLength].length > this.maxWords))
             {
-                $('#stdout').text(`Gave up shuffling after 100 attempts [${this.minWords}, ${this.maxWords}]`);
+                $('#stdout').text(`Gave up shuffling after 25 attempts [${this.minWords}, ${this.maxWords}]`);
             } else {
                 $('#stdout').text('');
             }

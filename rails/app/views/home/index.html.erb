@@ -36,16 +36,26 @@
                 <input type="text" class="form-control" id="timer" value="3:00" tabindex=6>
             </div>
 
-            <div class="input-group">
+            <div class="input-group c-inputs-stacked">
                 <label class="c-input c-checkbox">
-                    <input type="checkbox" id="autoreject">
-                    <span class="c-indicator">Immediately reject bad guesses</span>
+                    <input id="autoreject" type="checkbox">
+                    <span class="c-indicator"></span>
+                    Reject bad guesses immediately
+                </label>
+                <label class="c-input c-checkbox">
+                    <input id="autoscore" type="checkbox">
+                    <span class="c-indicator"></span>
+                    Score words immediately
+                </label>
+                <label class="c-input c-checkbox">
+                    <input id="toggleWordCompletionSlider" type="checkbox">
+                    <span class="c-indicator"></span>
+                    Show progress bar
                 </label>
             </div>
 
             <div class="input-group">
                 <button type="button" class="btn btn-secondary btn-lg" id="shuffle">Shuffle</button>
-
                 <button type="button" class="btn btn-primary btn-lg" id="start">Start</button>
             </div>
         </div>

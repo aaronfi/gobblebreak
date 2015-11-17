@@ -103,10 +103,12 @@
 
         .slider {
             padding-left: rem-calc(35);
+            cursor: auto;
         }
 
         .slider-selection {
             background: #BABABA;
+            cursor: auto;
         }
 
         .slider-handle {
@@ -119,6 +121,7 @@
 
         .slider-track-high {
             background-color: green;
+            cursor: auto;
         }
     }
 }
@@ -186,6 +189,11 @@
             .slider-track-low, .slider-track-high {
                 background: #BABABA;
             }
+        }
+
+        .c-checkbox {
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            color: #999;
         }
     }
 }
