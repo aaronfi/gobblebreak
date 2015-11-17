@@ -37,7 +37,8 @@
     </div>
 
     <div class="col-sm-10">
-        <div class="ui-content-widget ui-resizable" id="resizable">
+        <div class="ui-widget-content ui-resizable" id="resizable">
+            <div class="draggable-arrow"><i class="fa fa-arrows"></i></div>
             <div id="board" class="board"></div>
         </div>
     </div>
@@ -51,39 +52,71 @@
     });
 
     var word = [];
+
     var swipeHandler = function() {
         $(function() {
             var isMouseDown = false;
+            var prevId;
 
             $('.square')
-                .mousedown(function () {
+                .mousedown(function() {
                     isMouseDown = true;
-                    $(this).addClass("highlighted");
-                    word.push($(this).find('span').data('squareId'));
-                    return false; // prevent text selection
+                    $(this).parent().addClass('highlighted');
+                    $(this).addClass('highlighted');
+                    $(this).css('border-color', 'lightblue');
+                    $(this).parent().css('border-color', 'green');
+                    var id = $(this).find('span').data('squareId');
+                    word.push(id);
+                    prevId = id;
+
+                    $('#stdout').text(game.letters[id]);
+                    return false;  // prevent text selection
                 })
-                .mouseover(function () {
-                    if (isMouseDown && ! $(this).hasClass('highlighted')) {
-                        $(this).addClass("highlighted");
-                        word.push($(this).find('span').data('squareId'));
+                .mouseover(function(e) {
+                    var id = $(this).find('span').data('squareId');
+                    if (isMouseDown) {
+                        if ($(this).hasClass('highlighted')) {
+                            if (id === word[word.length - 2]) {  // undo move
+                                var mostRecentMove = word.pop();
+                                var mostRecentMoveId = '#sq' + mostRecentMove;
+                                $(mostRecentMoveId).parent().parent().parent().removeClass('highlighted');
+                                $(mostRecentMoveId).parent().parent().removeClass('highlighted');
+                                $(mostRecentMoveId).parent().parent().css('border-color', 'white');
+
+                                $('#stdout').text( $('#stdout').text().slice(0, -1) );
+                                prevId = word[word.length - 1];
+                            }
+                        } else if (game.board[prevId].indexOf(id) !== -1) {
+                                $(this).parent().addClass('highlighted');
+                                $(this).addClass('highlighted');
+                                $(this).css('border-color', 'lightblue');
+                                word.push(id);
+                                prevId = id;
+                                $('#stdout').append( game.letters[id] );
+                        }
+                    } else if (! $(this).hasClass('highlighted')) {
+                        // TODO add temporary yellow color
                     }
                 })
-                .bind("selectstart", function () {
+                .bind("selectstart", function() {
                     return false;
                 });
 
             $(document)
-                .mouseup(function () {
+                .mouseup(function() {
                     isMouseDown = false;
                     game.submitWord(word);
                     word = [];
+                    $('.outer-square').removeClass('highlighted');
+                    $('.outer-square').css('border-color', 'black');
                     $('.square').removeClass('highlighted');
-                    console.log(game.guesses);
+                    $('.square').css('border-color', 'white');
                 });
         });
     };
 
     var game = new Game();
+    game.size = 35;
     var shuffleBoard = function() {
         var x = $('#sizex').val();
         var y = $('#sizey').val();
@@ -96,6 +129,11 @@
     shuffleBoard();
 
     $('#board').html(game.toHtml());
+    $('#resizable').position({
+        my: 'bottom',
+        at: 'center',
+        of: '#topContainer'
+    }).css({ 'top': '0' });
 
     var incr_x = function() {
         $('#sizex').val(parseInt($('#sizex').val(), 10) + 1);
@@ -168,7 +206,7 @@
             $('#board').css({ 'border-color': 'blue' });
 
 var old = game.size;
-            game.size = ~~ Math.min(ui.size.height, ui.size.width) / Math.max(game.x, game.y);
+            game.size = ~~ Math.min(ui.size.height, ui.size.width) / (1.7 * Math.max(game.x, game.y));
 console.log(ui.size.height + " " +ui.size.width + " " + old + " " + game.size);
 
             $(".square").css({
@@ -176,6 +214,13 @@ console.log(ui.size.height + " " +ui.size.width + " " + old + " " + game.size);
                 'width': game.size + 'px',
                 'height': game.size + 'px',
                 'border-width': game.size < 45 ? '1px' : '1mm'
+            });
+            $(".outer-square").css({
+                'font-size': (game.size * 0.5) + 'px',
+                'width': game.size + 'px',
+                'height': game.size + 'px',
+                'border-width': game.size < 45 ? '1px' : '1mm',
+                'padding': (game.size * 0.2) + 'px'
             });
 
             // for some reason, these two commands are necessary;  otherwise the resize triangle can end up misaligned.
@@ -190,82 +235,131 @@ console.log(ui.size.height + " " +ui.size.width + " " + old + " " + game.size);
     });
 
     $('#resizable .ui-icon-gripsmall-diagonal-se')
-        .addClass('ui-icon-grip-diagonal-se')  // slight stylistic change, adding a better "click-drag" icon
-        .removeClass('ui-icon-gripsmall-diagonal-se')
+        .addClass('resizable-arrow')  // slight stylistic change, adding a better "click-drag" icon
+        .removeClass('ui-icon-gripsmall-diagonal-se ui-resizable-handle ui-resizable-se ui-icon')
+        .append('<i class="fa fa-arrows-alt"></i>');
+
+    $('#resizable .fa-arrows-alt')
         .hover(
             function() {
                 $('#board').css({ 'border-color': 'blue' });
-                $('.ui-icon-gripsmall-diagonal-se').css({ 'border-color': 'blue' });
+                $(this).css({ 'color': 'blue' });
             },
             function() {
                 $('#board').css({ 'border-color': 'transparent' });
-                $('.ui-icon-gripsmall-diagonal-se').css({ 'border-color': 'transparent' });
+                $(this).css({ 'color': 'white' });
             }
         )
         .mousedown(function() {
             $('#board').css({ 'border-color': 'blue' });
+            $(this).css({ 'color': 'blue' });
         })
         .mouseup(function() {
             $('#board').css({ 'border-color': 'transparent' });
+            $(this).css({ 'color': 'white' });
         });
 
-    $(window).load(function () {
-        var e, t, n, i, r, o, s;
+    $('#resizable').draggable({
+        handle: 'i.fa-arrows',
+        zIndex: 100,
+        // containment: '#topContainer',
+        start: function() {
+            $('#board').css({ 'border-color': 'green' });
+            $('#board i').css({ 'color': 'green' });
+        },
+        stop: function() {
+            $('#board').css({ 'border-color': 'transparent' });
+            $('#board i').css({ 'color': 'white' });
+        }
+    });
+    $('#resizable .fa-arrows')
+        .hover(
+            function() {
+                $('#board').css({ 'border-color': 'green' });
+                $(this).css({ 'color': 'green' });
+            },
+            function() {
+                $('#board').css({ 'border-color': 'transparent' });
+                $(this).css({ 'color': 'white' });
+            }
+        );
+
+
+
+
+    var e;
+    $(window).load(function() {
+        var t, n, i, p, r, o, s;
         r = $("#subheading");
         if (r.length > 0) {
             e = $('<span class="jqconsole-cursor user-color user_0"></span>');
             t = $('<span class="jqconsole-cursor user-color user_1"></span>');
-            o = function (e, t, n) {
+            o = function(e, t, n) {
                 var i;
                 if (0 !== t.length) {
                     e.text(e.text() + t.charAt(0));
                     i = 40 + 40 * Math.random();  // x == min delay in ms;  y == random number weighting offset
-                    return setTimeout(function () {
-                                return o(e, t.slice(1), n);
-                            }
-                            , i);
+                    return setTimeout(function() {
+                        return o(e, t.slice(1), n);
+                    }, i);
                 }
                 n && n();
             };
+            p = function() {
+                var currSpan = e.parent().find('span[class="text"]:not(:last)').last();
+
+                if (currSpan.length > 0) {
+                    if (currSpan.text().length === 0) {
+                        currSpan.remove();
+                    } else {
+                        currSpan.text(currSpan.text().slice(0, -1));
+                    }
+
+                    i = 15 + 5 * Math.random();  // x == min delay in ms;  y == random number weighting offset
+                    return setTimeout(function() {
+                        return p();
+                    }, i);
+                }
+            };
             s = function (e, t, n) {
-                if (0 !== t.length)
-                    return o(e, t[0], function () {
-                                var i;
-                                i = $('<span class="text"/>').insertAfter(e);
-                                return s(i, t.slice(1), n);
-                            }
-                    );
+                if (0 !== t.length) {
+                    return o(e, t[0], function() {
+                        var i = $('<span class="text" id="stdout" />').insertAfter(e);
+                        return s(i, t.slice(1), n);
+                    });
+                }
                 n && n();
                 return void 0;
             };
-            n = $('<span class="text"/>');
-            i = ["Blah blah blah", "blah blah"];
-            r.empty().append(n).append(e);
-            return s(n, i, function () {
+
+            n = $('<span class="text" />');
+            i = ["Fancy a ", "game?"];
+
+            r.append(n).append(e);
+            $(".jqconsole-cursor").fadeIn();
+
+            return setTimeout(function() {
+                return s(n, i, function () {
+                    return setTimeout(function () {
+                        var n = r.children().first();
+
+                        t.insertAfter(n);
                         return setTimeout(function () {
-                                    var n;
-                                    n = r.children().first();
-                                    e.fadeOut();
-                                    t.insertAfter(n);
+                            return o(n, " most lexical ", function () {
+                                return setTimeout(function () {
+                                    t.detach();
                                     return setTimeout(function () {
-                                                return o(n, " Not", function () {
-                                                            // debugger;
-                                                            return setTimeout(function () {
-                                                                        t.detach();
-                                                                        return setTimeout(function () {
-                                                                                    return $(".jqconsole-cursor").fadeOut();
-                                                                                }
-                                                                                , 300);
-                                                                    }
-                                                                    , 100);
-                                                        }
-                                                )
-                                            }
-                                            , 100);
-                                }
-                                , 400);
-                    }
-            );
+                                        $(".jqconsole-cursor").fadeIn();
+                                        return setTimeout(function () {
+                                            p();
+                                        }, 2500);
+                                    }, 300);
+                                }, 100);
+                            });
+                        }, 100);
+                    }, 400);
+                });
+            }, 1100);
         }
     });
 </script>

@@ -1,41 +1,105 @@
-.square {
+@mixin disable-text-selection() {
     // disable any native browser highlighting -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-
-    background-color: white;
-
-    text-align: center;
-    border-radius: 20%;
-    border: 1mm solid black;
-    font-family: verdana, arial, sans-serif;
-    font-weight: bold;
-    font-size: 23px;
-
-    display: table-cell;
-    height: 56px;
-    width: 56px;
-
-    cursor: pointer;
-
-    div {
-        display: table;
-        width: 100%;
-        height: 100%;
-    }
-
-    span {
-        display: table-cell;
-        text-align: center;
-        vertical-align: middle;
-    }
 }
 
-.highlighted {
-    background-color: lightblue;
+
+#resizable {
+    padding: 0.5rem;
+    display: inline-block;
+
+    .draggable-arrow {
+        @include disable-text-selection;
+
+        padding: rem-calc(70) 0 0 0;
+        font-size: rem-calc(23);
+        color: white;
+    }
+
+    .resizable-arrow {
+        @include disable-text-selection;
+
+        font-size: rem-calc(23);
+        color: white;
+        background-image: none;
+        display: inline-block;
+    }
+
+    .board {
+        margin-left: rem-calc(23);
+        margin-bottom: rem-calc(23);
+        border: 1mm solid transparent;
+        display: inline-block;
+
+        .row {
+            white-space: nowrap;
+            margin: 0;
+
+            .outer-square {
+
+                @include disable-text-selection;
+
+                padding: 5px;
+                background-color: white;
+
+                &.highlighted {
+                    background-color: lightblue;
+                }
+
+                display: table-cell;
+                height: 56px;
+                width: 56px;
+                font-size: 23px;
+
+                border-radius: 20%;
+                border: 1mm solid black;
+
+                cursor: pointer;
+
+                .square {
+                    @include disable-text-selection;
+
+                    background-color: white;
+
+                    &.highlighted {
+                        background-color: lightblue;
+                    }
+
+                    text-align: center;
+                    font-family: verdana, arial, sans-serif;
+                    font-weight: bold;
+                    font-size: 23px;
+
+                    height: 56px;
+                    width: 56px;
+                    border-radius: 20%;
+                    border: 1mm solid white;
+
+                    cursor: pointer;
+
+                    display: table;
+                    width: 100%;
+                    height: 100%;
+
+                    div {
+                        display: table;
+                        width: 100%;
+                        height: 100%;
+                    }
+
+                    span {
+                        display: table-cell;
+                        text-align: center;
+                        vertical-align: middle;
+                    }
+                }
+            }
+        }
+    }
 }
 
 .inputs {
@@ -68,26 +132,16 @@
     }
 }
 
-.board {
-    border: 1mm solid transparent;
-    margin-top: rem-calc(70);
-    display: inline-block;
-}
-
 .clearfix {
     clear: both;
 }
 
-.row {
-    white-space: nowrap;
-    margin: 0;
+.ui-widget-content {
+    background-color: transparent;
+    border: none;
+    background:transparent;
 }
 
 .ui-resizable-se {
     background-color: white;
-}
-
-#resizable {
-    padding: 0.5rem;
-    display: inline-block;
 }

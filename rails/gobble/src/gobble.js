@@ -143,7 +143,7 @@ class Gobble {
 
     submitWord(moves /* array of board index values */) {
 
-    	// verify adjadency of submitted moves
+    	// verify adjacency of submitted moves
     	for(let i = 1; i < moves.length; i++) {
     		if (this.board[moves[i-1]].indexOf(moves[i]) === -1) {
 				this.eventLog.add(`User submission had invalid adjacency: ${moves}:  no way to reach ${moves[i]} from ${moves[i-1]}`);
@@ -250,13 +250,13 @@ class Gobble {
             for (let i = 0; i < this.x; i++) {
                 let curr = (j * this.x) + i;
 
-                result += `<div class="square"><div><span id="sq${curr}" data-square-id="${curr}">`;
+                result += `<div class="outer-square"><div class="square"><div><span id="sq${curr}" data-square-id="${curr}">`;
                 if (this.letters[curr] === '.') {
                     result += 'Qu';
                 } else {
                     result += this.letters[curr].toUpperCase();
                 }
-                result += `</span></div></div>`;
+                result += `</span></div></div></div>`;
             }
 
             result += '<div class="clearfix"></div></div>';
