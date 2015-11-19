@@ -31,12 +31,15 @@ const EventLog = require('./../src/event_log');
 // TODO game timer with optional increment value
 //
 // TODO end game when all words are found
-//
-// TODO show progress bar of words found
-//
+////
 // TODO let user decide if words are rejected immediately, or scored immediately
 //
 // TODO add a pause button that when clicked, obscures the board
+//
+// TODO let users type words instead of swiping;
+// TODO -- possibly match each letter keystroke to first matching square on board;
+//      -- repeat the keystroke to advance to next h?  no that wouldn't work;
+//      -- space key to advance to next match... ugh...complicated....
 class Gobble {
 
     constructor(options = {}) {
@@ -161,7 +164,7 @@ class Gobble {
         // TODO confirm...
         this.eventLog = new EventLog();
 
-        this.shuffleBoard();
+        this.shuffleBoard(options.onShuffleBoardCallback);
     }
 
     submitWord(moves /* array of board index values */) {
@@ -169,13 +172,17 @@ class Gobble {
     	for(let i = 1; i < moves.length; i++) {
     		if (this.board[moves[i-1]].indexOf(moves[i]) === -1) {
 				this.eventLog.add(`User submission had invalid adjacency: ${moves}:  no way to reach ${moves[i]} from ${moves[i-1]}`);
-                return;
+                return [undefined, ':impossible'];
     		}
     	}
 
     	let word = '';
     	moves.forEach((i,n) => {
-    		word += this.letters[i];
+            if (this.letters[i] === '.') {
+                word += 'qu';
+            } else {
+                word += this.letters[i];
+            }
 	   	});
 
     	if (this.guesses.has(word)) {
@@ -184,14 +191,18 @@ class Gobble {
 			if (this.warnOnDuplicateGuess) {
 				// TODO warn user on guess.
 			}
+
+			return [word, ':duplicate'];
     	} else {
 	    	this.guesses.add(word);
+			this.eventLog.add(`User guessed the word: ${word}`);
 
-            if (this.answers[this.minWordLength].indexOf(word) !== -1) {
+            if (this.answers[this.minWordLength] && this.answers[this.minWordLength].indexOf(word) !== -1) {
                 this.correctGuesses.add(word);
+				return [word, ':correct'];
             }
 
-	    	this.eventLog.add(`User guessed the word: ${word}`);
+			return [word, ':incorrect'];
 	    }
     }
 
@@ -356,7 +367,7 @@ class Gobble {
 		}
 
 		let originalMinWordLength = this.minWordLength;
-		this.minWordLength = 1;
+		this.minWordLength = 2;
 		let answers = [];
 
 		while (true) {
@@ -364,7 +375,7 @@ class Gobble {
 			this.board.forEach((neighbors, i) => {
 				let visited = [];
 				visited[i] = true;
-				this._solve(i, visited, this.letters[i]);
+				this._solve(i, visited, (this.letters[i] === '.' ? 'qu' : this.letters[i]));
 			});
 
 			if (this.words.size > 0) {
@@ -395,7 +406,7 @@ class Gobble {
 	 	this.board[curr].forEach(i => {
 	 		if (! visited[i]) {
 	 			visited[i] = true;
-	 			this._solve(i, visited.slice(), candidate + (this.letters[i] === '.' ? 'Qu' : this.letters[i]));
+	 			this._solve(i, visited.slice(), candidate + (this.letters[i] === '.' ? 'qu' : this.letters[i]));
                 visited[i] = false;  // back out one step of our depth first search
 	 		}
 	 	});
@@ -409,50 +420,16 @@ class Gobble {
 		return this.dict.isWordPrefix(prefix);
 	}
 
-	shuffleBoard() {
-		let attempts = 0;
+	shuffleBoard(onShuffleBoardCallback) {
+        this.correctGuesses = new Set();
+        this.guesses = new Set();
 
 		this.letters = this.randomizerStrategy.shuffleBoard();
 		setTimeout(() => {
             this.answers = this.solve();
-            console.log(`${this.x}x${this.y}: ${this.answers.length}`);
 
-            if (this.maxWords > 0 || this.minWords > 0) {
-                while (attempts < 25 && (this.answers[this.minWordLength].length < this.minWords ||
-                    (this.maxWords > 0 && this.answers[this.minWordLength].length > this.maxWords)))
-                {
-                    this.letters = this.randomizerStrategy.shuffleBoard();
-                    this.answers = this.solve();
-                    attempts += 1;
-
-                    let message;
-                    if (this.maxWords > 0) {
-                        let delta = this.answers[this.minWordLength].length - this.maxWords;
-                        if (delta > 0) {
-                            message = `Shuffle attempt #${attempts} failed, ${delta} too many words.`;
-                        } else {
-                            message = '';
-                        }
-                    } else if (this.minWords > 0) {
-                        let delta = this.minWords - this.answers[this.minWordLength].length;
-                        if (delta > 0) {
-                            message = `Shuffle attempt #${attempts} failed, ${delta} too few words.`;
-                        } else {
-                            message = '';
-                        }
-                    }
-
-                    $('#stdout').text(message);
-                    console.log("message: " + message);
-                }
-            }
-
-            if (this.answers[this.minWordLength].length < this.minWords ||
-                (this.maxWords > 0 && this.answers[this.minWordLength].length > this.maxWords))
-            {
-                $('#stdout').text(`Gave up shuffling after 25 attempts [${this.minWords}, ${this.maxWords}]`);
-            } else {
-                $('#stdout').text('');
+            if (onShuffleBoardCallback) {
+                onShuffleBoardCallback();
             }
         }, 0);
 	}

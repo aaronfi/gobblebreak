@@ -1,5 +1,27 @@
 @import 'base/shared';
 
+.col-sm-2 {
+    .list-group {
+        margin-top: rem-calc(75);
+        height: rem-calc(579);
+        overflow-y: auto;
+
+        .list-group-item {
+            &.hidden {
+                display: none;
+            }
+
+            white-space: nowrap;
+            padding: 0.25em 0.75em;
+
+            span {
+                line-height: rem-calc(17);
+                vertical-align: middle;
+            }
+        }
+    }
+}
+
 #resizable {
     padding: 0.5rem;
     display: inline-block;
@@ -25,7 +47,7 @@
     }
 
     .board {
-        margin-left: rem-calc(23);
+        margin-left: rem-calc(26);
         margin-bottom: rem-calc(23);
         border: 1mm solid transparent;
         display: inline-block;
@@ -41,8 +63,31 @@
                 padding: 5px;
                 background-color: white;
 
+                &:hover {
+                    background-color: lightyellow;
+
+                    .square {
+                        background-color: lightyellow;
+                        border: 1mm solid lightyellow;
+                    }
+                }
+
+                &.highlighted-starting-letter {
+                    background-color: lightblue;
+                    border-color: yellow;
+
+                    .square {
+                        border: 1mm solid lightblue;
+                        background-color: lightblue;
+                    }
+                }
+
                 &.highlighted {
                     background-color: lightblue;
+                    .square {
+                        border: 1mm solid lightblue;
+                        background-color: lightblue;
+                    }
                 }
 
                 display: table-cell;
@@ -58,11 +103,12 @@
                 .square {
                     @include disable-text-selection;
 
-                    background-color: white;
-
                     &.highlighted {
                         background-color: lightblue;
+                        border-color: lightblue;
                     }
+
+                    background-color: white;
 
                     text-align: center;
                     font-family: verdana, arial, sans-serif;
@@ -100,6 +146,10 @@
         display: inline-block;
         vertical-align: top;
         margin-top: rem-calc(20);
+
+        .tooltip {
+            z-index: 0;
+        }
 
         .slider {
             padding-left: rem-calc(35);
@@ -140,6 +190,7 @@
         .form-control {
             width: rem-calc(48);
             text-align: center;
+            z-index: 0;
         }
 
         #timer {
@@ -206,4 +257,13 @@
     background-color: transparent;
     border: none;
     background:transparent;
+}
+
+
+.tooltip.tooltip-right .tooltip-arrow, .tooltip.bs-tether-element-attached-left .tooltip-arrow {
+    border-right-color: #eceeef;
+}
+.tooltip-inner {
+    background-color: #eceeef;
+    color: #55595c;
 }

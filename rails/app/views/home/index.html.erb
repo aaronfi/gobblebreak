@@ -38,30 +38,23 @@
 
             <div class="input-group c-inputs-stacked">
                 <label class="c-input c-checkbox">
-                    <input id="autoreject" type="checkbox">
-                    <span class="c-indicator"></span>
-                    Reject bad guesses immediately
-                </label>
-                <label class="c-input c-checkbox">
-                    <input id="autoscore" type="checkbox">
-                    <span class="c-indicator"></span>
-                    Score words immediately
-                </label>
-                <label class="c-input c-checkbox">
-                    <input id="toggleWordCompletionSlider" type="checkbox">
+                    <input id="showProgressBar" type="checkbox" checked>
                     <span class="c-indicator"></span>
                     Show progress bar
                 </label>
             </div>
 
             <div class="input-group">
-                <button type="button" class="btn btn-secondary btn-lg" id="shuffle">Shuffle</button>
-                <button type="button" class="btn btn-primary btn-lg" id="start">Start</button>
+                <button type="button" class="btn btn-secondary btn-lg" id="shuffleButton" data-toggle="tooltip" data-placement="right" title="Hold <space bar> for repeated shuffling">Shuffle</button>
+            </div>
+
+            <div class="input-group">
+                <button type="button" class="btn btn-primary btn-lg" id="startButton">Pause</button>
             </div>
         </div>
     </div>
 
-    <div class="col-sm-10">
+    <div class="col-sm-8">
         <div class="ui-widget-content ui-resizable" id="resizable">
             <div class="draggable-arrow"><i class="fa fa-arrows"></i></div>
 
@@ -72,9 +65,20 @@
             </div>
         </div>
     </div>
+
+    <div class="col-sm-2">
+        <li class="list-group-item hidden" id="newGuess">
+            <span class="label label-default label-pill pull-right"></span>
+            <span></span>
+        </li>
+
+        <ul class="list-group" id="guesses">
+        </ul>
+    </div>
 </div>
 
 <script>
+    var game = new Game({ htmlAnchor: window.location.hash });
 
     //
     // helper functions
@@ -84,13 +88,16 @@
         var timer = setInterval(function() {
             if (wordCompletionSlider && game.answers[game.minWordLength]) {
                 var numAnswers = game.answers[game.minWordLength].length;
-                wordCompletionSlider.slider('setAttribute', 'max', numAnswers).slider('refresh');
+                wordCompletionSlider
+                    .slider('setValue', [game.correctGuesses.size, numAnswers])
+                    .slider('setAttribute', 'max', numAnswers)
+                    .slider('refresh');
                 clearInterval(timer);
             }
         }, 250);
 
         $('#wordCompletionSlider').css({ 'height': $('#board').height() - 1.5*parseInt($("#board").css("margin-bottom")) });
-    }
+    };
     var drawBoard = function() {
         $(".square").css({
             'font-size': (game.size * 0.5) + 'px',
@@ -121,61 +128,84 @@
             of: '#topContainer'
         }).css({'top': '0'});
     };
+    var refreshBoard = function() {
+        $('#board').html(game.toHtml());
+        drawWordCompletionSlider();
+        swipeHandler();
+        window.location.hash = game.toHtmlAnchor();
+    };
+    var numShuffleAttempts = 0;
+    var onShuffleBoardCallback = function() {
+        numShuffleAttempts++;
+
+        if (game.maxWords > 0 || game.minWords > 0) {
+            if (numShuffleAttempts < 25) {
+                var numAnswers = game.answers[game.minWordLength] ? game.answers[game.minWordLength].length : 0;
+
+                if (numAnswers < game.minWords) {
+                    var delta = game.minWords - numAnswers;
+                    $('#stdout').text('Shuffle #' + numShuffleAttempts + ' failed, ' + delta + ' too few word' + (delta !== 1 ? 's' : ''));
+                    shuffleBoard();
+                }
+
+                if (game.maxWords > 0 && numAnswers > game.maxWords) {
+                    var delta = numAnswers - game.maxWords;
+                    $('#stdout').text('Shuffle #' + numShuffleAttempts + ' failed, ' + delta + ' too many word' + (delta !== 1 ? 's' : ''));
+                    shuffleBoard();
+                }
+            } else {
+                numShuffleAttempts = 0;
+            }
+        } else {
+            numShuffleAttempts = 0;
+        }
+
+        refreshBoard();
+    };
+
     var shuffleBoard = function() {
         var x = $('#sizex').val();
         var y = $('#sizey').val();
         if (x !== game.x || y !== game.y) {
-            game.resize({ x: x, y: y });
-            $('#board').html(game.toHtml());
-            drawWordCompletionSlider();
-
-            swipeHandler();
-            window.location.hash = game.toHtmlAnchor();
+            game.resize({ x: x, y: y, onShuffleBoardCallback: onShuffleBoardCallback });
+            refreshBoard();
         }
+        $('#guesses').empty();
     };
     var swipeHandler = function() {
         $(function() {
             var isMouseDown = false;
             var prevId;
 
-            $('.square')
+            $('.outer-square')
                 .mousedown(function() {
                     isMouseDown = true;
-                    $(this).parent().addClass('highlighted');
-                    $(this).addClass('highlighted');
-                    $(this).css('border-color', 'lightblue');
-                    $(this).parent().css('border-color', 'green');
+                    $(this).addClass('highlighted-starting-letter visited');
                     var id = $(this).find('span').data('squareId');
                     word.push(id);
                     prevId = id;
 
-                    $('#stdout').text(game.letters[id]);
+                    $('#stdout').text(game.letters[id] === '.' ? 'qu' : game.letters[id]);
                     return false;  // prevent text selection
-                })
-                .mouseover(function(e) {
+                });
+
+            $('.square').mouseover(function(e) {
                     var id = $(this).find('span').data('squareId');
                     if (isMouseDown) {
-                        if ($(this).hasClass('highlighted')) {
+                        if ($(this).parent().hasClass('visited')) {
                             if (id === word[word.length - 2]) {  // undo move
                                 var mostRecentMove = word.pop();
                                 var mostRecentMoveId = '#sq' + mostRecentMove;
-                                $(mostRecentMoveId).parent().parent().parent().removeClass('highlighted');
-                                $(mostRecentMoveId).parent().parent().removeClass('highlighted');
-                                $(mostRecentMoveId).parent().parent().css('border-color', 'white');
-
+                                $(mostRecentMoveId).parent().parent().parent().removeClass('visited highlighted');
                                 $('#stdout').text( $('#stdout').text().slice(0, -1) );
                                 prevId = word[word.length - 1];
                             }
                         } else if (game.board[prevId].indexOf(id) !== -1) {
-                                $(this).parent().addClass('highlighted');
-                                $(this).addClass('highlighted');
-                                $(this).css('border-color', 'lightblue');
+                                $(this).parent().addClass('highlighted visited');
                                 word.push(id);
                                 prevId = id;
                                 $('#stdout').append( game.letters[id] );
                         }
-                    } else if (! $(this).hasClass('highlighted')) {
-                        // TODO add temporary yellow color
                     }
                 })
                 .bind("selectstart", function() {
@@ -185,14 +215,27 @@
             $(document)
                 .mouseup(function() {
                     isMouseDown = false;
-                    game.submitWord(word);
+
+                    var results = game.submitWord(word);
+                    var formedWord = results[0];
+                    var resultCode = results[1];
+
+                    if (formedWord && resultCode !== ':duplicate' && resultCode !== ':impossible') {
+                        var newGuess = $('#newGuess').clone(false);
+                        newGuess.removeAttr('id');
+                        newGuess.removeClass('hidden');
+                        if (resultCode === ':correct') {
+                            newGuess.find('span:first-child').text( game.scoreGuess(formedWord) );
+                        }
+                        newGuess.find('span:last-child').text( formedWord );
+
+                        newGuess.prependTo('#guesses');
+                    }
+
                     var numAnswers = game.answers[game.minWordLength].length;
                     wordCompletionSlider.slider('setValue', [game.correctGuesses.size, numAnswers]);
                     word = [];
-                    $('.outer-square').removeClass('highlighted');
-                    $('.outer-square').css('border-color', 'black');
-                    $('.square').removeClass('highlighted');
-                    $('.square').css('border-color', 'white');
+                    $('.outer-square').removeClass('highlighted highlighted-starting-letter visited');
                 });
         });
     };
@@ -202,7 +245,6 @@
     //
 
     var word = [];
-    var game = new Game({ htmlAnchor: window.location.hash });
     $('#board').html(game.toHtml());
     swipeHandler();
     drawBoard();
@@ -339,7 +381,7 @@
             max: minMaxWordsSlider_maxValue,
             range: true,
             tooltip: 'hide',
-            value: [0, minMaxWordsSlider_maxValue]
+            value: [game.minWords, game.maxWords === 0 ? minMaxWordsSlider_maxValue : game.maxWords]
         }).on('slide', function(e) {
             $('#minwords').val(e.value[0]);
             $('#maxwords').val(e.value[1] === minMaxWordsSlider_maxValue ? 'any' : e.value[1]);
@@ -462,22 +504,55 @@
         }
     });
 
-
     // game progression bar
-    var wordCompletionSlider = $('#wordCompletionSlider')
-        .slider({
+    var wordCompletionSlider = $('#wordCompletionSlider').slider({
             min: 0,
             max: -1,
+            value: 0,
             range: true,
             tooltip: 'always',
-            value: 0,
             reversed: true,
             orientation: 'vertical',
             step: 1,
             enabled : false,
-            tooltip_split: true
+            tooltip_split: true,
+            formatter: function(value) {
+                var result = value;
+                if (game.answers[game.minWordLength]) {
+                    result += ' word';
+                    if (value !== 1) {
+                        result += 's';
+                    }
+                    if (value === game.answers[game.minWordLength].length) {
+                        result += ' total';
+                    } else {
+                        result += ' found, ';
+                        var score = game.scoreGuesses();
+                        result += score + ' point';
+                        if (score !== 1) {
+                            result += 's';
+                        }
+                    }
+                }
+                return result;
+            }
         });
     drawWordCompletionSlider();
+
+    $('#showProgressBar').change(function() {
+        if (this.checked) {
+            $('#wordCompletionSlider').css({ 'z-index': '' });
+        } else {
+            $('#wordCompletionSlider').css({ 'z-index': '-10' });
+        }
+    });
+
+    // Start button
+    $('#shuffleButton').click(function() {
+        shuffleBoard();
+        centerBoard();
+    });
+    $('#shuffleButton').tooltip();
 
     //
     // initialize board resizing
@@ -634,5 +709,7 @@
                 });
             }, 1100);
         }
+
+        $(window).focus();
     });
 </script>

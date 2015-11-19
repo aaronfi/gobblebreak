@@ -46,6 +46,7 @@ html {
 
 .navbar-brand {
     font-weight: bolder;
+    white-space: nowrap;
 
     img {
         height: rem-calc(60);
@@ -132,133 +133,88 @@ a.dropdown-toggle {
     border-top-left-radius: 0;
     border-bottom-right-radius: 0;
     border-right-width: 0;
-}
 
-// open right-hand-nav menu on mouseover
-// ul.nav li > .dropdown-menu,  // TODO delete when done with DEBUGGERY
-ul.nav li:hover > .dropdown-menu {
-    display: block;
-}
-
-.profile-pic {
-    -webkit-border-radius: rem-calc(3);
-    border-radius: rem-calc(3);
-    margin-left: rem-calc(10);
-}
-
-@font-face {
-    font-family: 'Circular';
-    src:font-url('Circular_Air-Book.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Circular';
-    src:font-url('Circular_Air-Bold.woff') format('woff');
-    font-weight: bold;
-    font-style: normal;
-}
-
-.sign-in-with-google {
-    -moz-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    -webkit-user-select: none;
-
-    -webkit-font-smoothing: antialiased;
-
-    background: white;
-    border-radius: rem-calc(3);
-    border: rem-calc(1) solid #c4c4c4;
-    color: #565a5c;
-    cursor: pointer;
-    display: table;
-    font: bold rem-calc(16) Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    letter-spacing: normal;
-    margin-bottom: rem-calc(12);
-    padding: rem-calc(12) rem-calc(36);
-    text-align: center;
-    text-decoration: none;
-    vertical-align: middle;
-    white-space: nowrap;
-    width: 100%;
-
-    &:hover {
-        border-color: #aaa;
-        background: #f2f2f2;
-    }
-
-    .icon-container {
-        display: table-cell;
-        padding-right: rem-calc(20);
-        img {
-            width: rem-calc(29);
+    .dropdown-item {
+        .icon-container {
+            display: table-cell;
+            padding-right: rem-calc(20);
+            img {
+                width: rem-calc(29);
+            }
         }
-    }
 
-    .text-container {
-        display:table-cell;
-        vertical-align: middle;
-    }
-}
-
-.sign-in-with-facebook {
-    -moz-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    -webkit-user-select: none;
-
-    -webkit-font-smoothing: antialiased;
-
-    background-color: #3B5998;
-    border-bottom-color: #263a63;
-    border-bottom: rem-calc(1) solid rgb(38, 58, 99);
-    border-color: #3B5998;
-    border-left: rem-calc(1) solid rgb(59, 89, 152);
-    border-radius: rem-calc(2);
-    border-right: rem-calc(1) solid rgb(59, 89, 152);
-    border-top: rem-calc(1) solid rgb(59, 89, 152);
-    color: #fff;
-    cursor: pointer;
-    display: table;
-    font: bold rem-calc(16) Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    letter-spacing: normal;
-    margin-top: rem-calc(12);
-    padding: rem-calc(12) rem-calc(36);
-    text-align: center;
-    text-decoration: none;
-    vertical-align: middle;
-    white-space: nowrap;
-    width: 100%;
-
-    &:hover {
-        border-color: #4568b2;
-        border-bottom-color: #2d4575;
-        background-color: #4568b2;
-        color: #fff;
-    }
-
-    .icon-container {
-        display: table-cell;
-        padding-right: rem-calc(20);
-        img {
-            width: rem-calc(29);
+        .text-container {
+            display:table-cell;
+            vertical-align: middle;
         }
-    }
 
-    .text-container {
-        color: #fff;
-        display:table-cell;
-        vertical-align: middle;
+        .sign-in-with-google {
+            z-index: 1100;
+
+            @include disable-text-selection;
+
+            -webkit-font-smoothing: antialiased;
+
+            background: white;
+            border-radius: rem-calc(3);
+            border: rem-calc(1) solid #c4c4c4;
+            color: #565a5c;
+            cursor: pointer;
+            display: table;
+            font: bold rem-calc(16) Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            letter-spacing: normal;
+            margin-bottom: rem-calc(12);
+            padding: rem-calc(12) rem-calc(36);
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            white-space: nowrap;
+            width: 100%;
+
+            &:hover {
+                border-color: #aaa;
+                background: #f2f2f2;
+            }
+        }
+
+        .sign-in-with-facebook {
+            @include disable-text-selection;
+
+            -webkit-font-smoothing: antialiased;
+
+            background-color: #3B5998;
+            border-bottom-color: #263a63;
+            border-bottom: rem-calc(1) solid rgb(38, 58, 99);
+            border-color: #3B5998;
+            border-left: rem-calc(1) solid rgb(59, 89, 152);
+            border-radius: rem-calc(2);
+            border-right: rem-calc(1) solid rgb(59, 89, 152);
+            border-top: rem-calc(1) solid rgb(59, 89, 152);
+            color: #fff;
+            cursor: pointer;
+            display: table;
+            font: bold rem-calc(16) Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            letter-spacing: normal;
+            margin-top: rem-calc(12);
+            padding: rem-calc(12) rem-calc(36);
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            white-space: nowrap;
+            width: 100%;
+
+            &:hover {
+                border-color: #4568b2;
+                border-bottom-color: #2d4575;
+                background-color: #4568b2;
+                color: #fff;
+            }
+        }
     }
 }
 
 .sign-in-with-email {
+
     input {
         background-color: #fff;
         border-radius: rem-calc(2);
@@ -304,6 +260,31 @@ ul.nav li:hover > .dropdown-menu {
         padding: rem-calc(9 27);
         white-space: normal;
     }
+}
+
+// open right-hand-nav menu on mouseover
+ul.nav li:hover > .dropdown-menu {
+    display: block;
+}
+
+.profile-pic {
+    -webkit-border-radius: rem-calc(3);
+    border-radius: rem-calc(3);
+    margin-left: rem-calc(10);
+}
+
+@font-face {
+    font-family: 'Circular';
+    src:font-url('Circular_Air-Book.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Circular';
+    src:font-url('Circular_Air-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
 }
 
 .container {
