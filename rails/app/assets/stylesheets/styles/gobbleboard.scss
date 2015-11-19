@@ -3,7 +3,7 @@
 .col-sm-2 {
     .list-group {
         margin-top: rem-calc(75);
-        height: rem-calc(579);
+        height: rem-calc(495);
         overflow-y: auto;
 
         .list-group-item {
@@ -266,4 +266,33 @@
 .tooltip-inner {
     background-color: #eceeef;
     color: #55595c;
+}
+
+.flash {
+    -moz-animation: flash 1s ease-out;
+    -moz-animation-iteration-count: 1;
+
+    -webkit-animation: flash 1s ease-out;
+    -webkit-animation-iteration-count: 1;
+
+    -ms-animation: flash 1s ease-out;
+    -ms-animation-iteration-count: 1;
+}
+
+@-webkit-keyframes flash {
+    0% { background-color: none; }
+    50% { background-color: red; }
+    100% { background-color: none; }
+}
+
+@-moz-keyframes flash {
+    0% { background-color: none; }
+    50% { background-color: red; }
+    100% { background-color: none; }
+}
+
+@-ms-keyframes flash {
+    0% { background-color: none; }
+    50% { background-color: red; }
+    100% { background-color: none; }
 }

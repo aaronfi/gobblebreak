@@ -2,7 +2,7 @@
 <div class="container" id="topContainer">
     <div class="col-sm-2">
         <div class="inputs">
-            <div class="input-group">
+            <div class="input-group" id="sizexy" data-toggle="tooltip" data-placement="right" title="Use all four arrow keys to change the board">
                 <span class="input-group-addon" id="size">Size</span>
                 <input type="text" class="form-control" id="sizex" tabindex=1>
                 <span class="input-group-addon">by</span>
@@ -28,7 +28,7 @@
 
             <div class="input-group">
                 <span class="input-group-addon" id="size">Minimum word length</span>
-                <input type="text" class="form-control" id="minwordlen" tabindex=5>
+                <input type="text" class="form-control" id="minwordlength" tabindex=5>
             </div>
 
             <div class="input-group">
@@ -42,10 +42,15 @@
                     <span class="c-indicator"></span>
                     Show progress bar
                 </label>
+                <label class="c-input c-checkbox">
+                    <input id="showIncorrectGuesses" type="checkbox" checked>
+                    <span class="c-indicator"></span>
+                    Show incorrect guesses
+                </label>
             </div>
 
             <div class="input-group">
-                <button type="button" class="btn btn-secondary btn-lg" id="shuffleButton" data-toggle="tooltip" data-placement="right" title="Hold <space bar> for repeated shuffling">Shuffle</button>
+                <button type="button" class="btn btn-secondary btn-lg" id="shuffleButton" data-toggle="tooltip" data-placement="right" title="Hold space bar for repeated shuffling">Shuffle</button>
             </div>
 
             <div class="input-group">
@@ -61,7 +66,7 @@
             <div id="board" class="board"></div>
 
             <div class="input-group word-completion-slider">
-                <input id="wordCompletionSlider" data-slider-id='wordCompletionSlider' type="text" />
+                <input id="wordCompletionSlider" data-slider-id='wordCompletionSlider' type='text' />
             </div>
         </div>
     </div>
@@ -130,7 +135,7 @@
     };
     var refreshBoard = function() {
         $('#board').html(game.toHtml());
-        drawWordCompletionSlider();
+        drawBoard();
         swipeHandler();
         window.location.hash = game.toHtmlAnchor();
     };
@@ -146,21 +151,29 @@
                     var delta = game.minWords - numAnswers;
                     $('#stdout').text('Shuffle #' + numShuffleAttempts + ' failed, ' + delta + ' too few word' + (delta !== 1 ? 's' : ''));
                     shuffleBoard();
-                }
-
-                if (game.maxWords > 0 && numAnswers > game.maxWords) {
+                } else if (game.maxWords > 0 && numAnswers > game.maxWords) {
                     var delta = numAnswers - game.maxWords;
                     $('#stdout').text('Shuffle #' + numShuffleAttempts + ' failed, ' + delta + ' too many word' + (delta !== 1 ? 's' : ''));
                     shuffleBoard();
+                } else {
+                    $('#stdout').text('');
                 }
             } else {
+                $('#stdout').text('Gave up after ' + numShuffleAttempts + ' shuffle attempts.  Try again, or relax your shuffle criteria.');
                 numShuffleAttempts = 0;
             }
         } else {
+            $('#stdout').text('');
             numShuffleAttempts = 0;
         }
 
         refreshBoard();
+    };
+    var minWordLengthCallback = function() {
+        var minlength = $('#minwordlength').val();
+        game.minWordLength = Number(minlength);
+        refreshBoard();
+        window.location.hash = game.toHtmlAnchor();
     };
 
     var shuffleBoard = function() {
@@ -169,6 +182,7 @@
         if (x !== game.x || y !== game.y) {
             game.resize({ x: x, y: y, onShuffleBoardCallback: onShuffleBoardCallback });
             refreshBoard();
+            drawWordCompletionSlider();
         }
         $('#guesses').empty();
     };
@@ -216,26 +230,38 @@
                 .mouseup(function() {
                     isMouseDown = false;
 
-                    var results = game.submitWord(word);
-                    var formedWord = results[0];
-                    var resultCode = results[1];
+                    if (word.length >= game.minWordLength) {
+                        var results = game.submitWord(word);
+                        var formedWord = results[0];
+                        var resultCode = results[1];
 
-                    if (formedWord && resultCode !== ':duplicate' && resultCode !== ':impossible') {
-                        var newGuess = $('#newGuess').clone(false);
-                        newGuess.removeAttr('id');
-                        newGuess.removeClass('hidden');
-                        if (resultCode === ':correct') {
-                            newGuess.find('span:first-child').text( game.scoreGuess(formedWord) );
+                        if (formedWord && resultCode !== ':duplicate' && resultCode !== ':impossible') {
+                            var newGuess = $('#newGuess').clone(false);
+                            newGuess.removeAttr('id');
+                            newGuess.removeClass('hidden');
+                            if (resultCode === ':correct') {
+                                newGuess.find('span:first-child').text(game.scoreGuess(formedWord));
+                            } else {
+                                newGuess.addClass('incorrectGuess');
+                            }
+                            newGuess.find('span:last-child').text(formedWord);
+
+                            newGuess.prependTo('#guesses');
                         }
-                        newGuess.find('span:last-child').text( formedWord );
 
-                        newGuess.prependTo('#guesses');
+                        var numAnswers = game.answers[game.minWordLength] ? game.answers[game.minWordLength].length : 0;
+                        wordCompletionSlider.slider('setValue', [game.correctGuesses.size, numAnswers]);
+                    } else if (word.length > 1) {
+                        $('#minwordlength').addClass('flash');
+                        $('#minwordlength').prev().addClass('flash');
+                        setTimeout(function(){
+                            $('#minwordlength').removeClass('flash');
+                            $('#minwordlength').prev().removeClass('flash');
+                        }, 750);
                     }
 
-                    var numAnswers = game.answers[game.minWordLength].length;
-                    wordCompletionSlider.slider('setValue', [game.correctGuesses.size, numAnswers]);
-                    word = [];
                     $('.outer-square').removeClass('highlighted highlighted-starting-letter visited');
+                    word = [];
                 });
         });
     };
@@ -254,7 +280,7 @@
     $('#sizey').val(game.y);
     $('#minwords').val(game.minWords);
     $('#maxwords').val(game.maxWords === 0 ? 'any' : game.maxWords);
-    $('#minwordlen').val(game.minWordLength);
+    $('#minwordlength').val(game.minWordLength);
 
     //
     // snazzy keyboard controls
@@ -284,7 +310,6 @@
             case 32:  // space bar
                 e.preventDefault();
                 shuffleBoard();
-                centerBoard();
                 e.stopPropagation();
                 break;
             case 37:
@@ -504,6 +529,42 @@
         }
     });
 
+    //minwordlength input
+    var decr_minlength = function() {
+        var minlength = Math.max(2, parseInt($('#minwordlength').val(), 10) - 1);
+        $('#minwordlength').val(minlength);
+        minWordLengthCallback();
+    }
+    var incr_minlength = function() {
+        var minlength = Math.max(2, parseInt($('#minwordlength').val(), 10) + 1);
+        $('#minwordlength').val(minlength);
+        minWordLengthCallback();
+    }
+    $('#minwordlength').bind('keydown', function(e) {
+        switch (e.keyCode) {
+            case 13:  // enter key
+            case 32:  // space bar
+            case 37:
+            case 39:
+                e.preventDefault();
+                e.stopPropagation();
+                break;
+            case 38:
+                e.preventDefault();
+                incr_minlength();
+                e.stopPropagation();
+                break;
+            case 40:
+                e.preventDefault();
+                decr_minlength();
+                e.stopPropagation();
+                break;
+            default:
+                break;
+        }
+    });
+    $('#minwordlength').change(minWordLengthCallback);
+
     // game progression bar
     var wordCompletionSlider = $('#wordCompletionSlider').slider({
             min: 0,
@@ -547,12 +608,23 @@
         }
     });
 
+    $('#showIncorrectGuesses').change(function() {
+        if (this.checked) {
+            $('.incorrectGuess').show();
+        } else {
+            $('.incorrectGuess').hide();
+        }
+    });
+
     // Start button
     $('#shuffleButton').click(function() {
         shuffleBoard();
         centerBoard();
+        $('#shuffleButton').tooltip('hide');
     });
     $('#shuffleButton').tooltip();
+
+    $('#sizexy').tooltip();
 
     //
     // initialize board resizing

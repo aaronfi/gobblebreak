@@ -74,7 +74,7 @@ class Gobble {
         this.x = Number(options.x);
         this.y = Number(options.y);
         this.size = Number(options.size);  // pixel length of a letter's square on the board
-        this.minWordLength = options.minWordLength;
+        this.minWordLength = options.minWordLength > 1 ? options.minWordLength : 2;
         this.minWords = options.minWords;
         this.maxWords = options.maxWords;
         this.includeUwithQ = options.includeUwithQ;
