@@ -54,11 +54,12 @@ class Gobble {
             rejectInvalidGuesses: false,
             warnOnDuplicateGuess: true,
             dictionary: Dictionary,  // a global object,
-            size: 35
+            clockSeconds: 180,
+            size: 45
         }, options);
 
-        // #<x>x<y>,<letters>,<minWordLength>,<minWords>,<maxWords>,<pixelSize> TODO add rest of params
-        // #7x4,arisnnblintdalinhhidaeewvdil,3,0,0,45
+        // #<x>x<y>,<letters>,<minWordLength>,<minWords>,<maxWords>,<clockSeconds>,<pixelSize> TODO add rest of params
+        // #7x4,arisnnblintdalinhhidaeewvdil,3,0,0,180,45
         if (options.htmlAnchor) {
             let vals = options.htmlAnchor.split(',');
             let sizes = vals[0].split('x');
@@ -68,7 +69,8 @@ class Gobble {
             options.minWordLength = Number(vals[2]);
             options.minWords = Number(vals[3]);
             options.maxWords = Number(vals[4]);
-            options.size = Number(vals[5]);
+            options.clockSeconds = Number(vals[5]);
+            options.size = Number(vals[6]);
         }
 
         this.x = Number(options.x);
@@ -80,6 +82,7 @@ class Gobble {
         this.includeUwithQ = options.includeUwithQ;
         this.rejectInvalidGuesses = options.rejectInvalidGuesses;
         this.warnOnDuplicateGuess = options.warnOnDuplicateGuess;
+        this.clockSeconds = Number(options.clockSeconds);
 
         this.randomizerStrategy = new RandomizerStrategy({ 
         	x: this.y, 
@@ -279,6 +282,10 @@ class Gobble {
     	return score;
     }
 
+    missedAnswers() {
+        return new Set(this.answers[this.minWordLength].filter(x => !this.correctGuesses.has(x)));
+    }
+
 	toHtml() {
         let result = '';
 
@@ -304,7 +311,7 @@ class Gobble {
 
     //TODO game.size doesn't really belong as a uniquely defining characteristic of an instance of a game
     toHtmlAnchor() {
-        return `${this.x}x${this.y},${this.letters},${this.minWordLength},${this.minWords},${this.maxWords},${this.size}`;
+        return `${this.x}x${this.y},${this.letters},${this.minWordLength},${this.minWords},${this.maxWords},${this.clockSeconds},${this.size}`;
     }
 
     toString() {

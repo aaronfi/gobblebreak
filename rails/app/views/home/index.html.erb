@@ -31,10 +31,6 @@
                 <input type="text" class="form-control" id="minwordlength" tabindex=5>
             </div>
 
-            <div class="input-group">
-                <span class="input-group-addon" id="size">Timer</span>
-                <input type="text" class="form-control" id="timer" value="3:00" tabindex=6>
-            </div>
 
             <div class="input-group c-inputs-stacked">
                 <label class="c-input c-checkbox">
@@ -48,19 +44,35 @@
                     Show incorrect guesses
                 </label>
             </div>
-
-            <div class="input-group">
-                <button type="button" class="btn btn-secondary btn-lg" id="shuffleButton" data-toggle="tooltip" data-placement="right" title="Hold space bar for repeated shuffling">Shuffle</button>
-            </div>
-
-            <div class="input-group">
-                <button type="button" class="btn btn-primary btn-lg" id="startButton">Pause</button>
-            </div>
         </div>
     </div>
 
     <div class="col-sm-8">
         <div class="ui-widget-content ui-resizable" id="resizable">
+
+            <div class="container top-controls">
+                <div class="row">
+                    <div class="col-sm-3 col-sm-offset-1">
+                        <button type="button" class="btn btn-secondary btn-lg" tabindex=6 id="shuffleButton" data-toggle="tooltip" data-placement="left" title="Hold space bar for repeated shuffling">Shuffle</button>
+                        <button type="button" class="btn btn-primary btn-lg" tabindex=7 id="endButton">End</button>
+                    </div>
+                    <div class="col-sm-4">
+                        <span class="centerBlock">
+                            <div class="input-group">
+                                <span class="input-group-addon">Timer</span>
+                                <input type="text" class="form-control" id="timer" tabindex=6>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="leftBlock">
+                        <div class="col-sm-3 col-sm-offset-1">
+                            <button type="button" class="btn btn-primary btn-lg col col-sm-2" id="startButton" tabindex=8 data-toggle="tooltip" data-placement="right" title="Hit enter to start, or just swipe your first word.">Start</button>
+                            <button type="button" class="btn btn-primary btn-lg col col-sm-2" id="pauseButton" tabindex=9>Pause</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="draggable-arrow"><i class="fa fa-arrows"></i></div>
 
             <div id="board" class="board"></div>
@@ -77,8 +89,7 @@
             <span></span>
         </li>
 
-        <ul class="list-group" id="guesses">
-        </ul>
+        <ul class="list-group" id="guesses" />
     </div>
 </div>
 
@@ -89,6 +100,14 @@
     // helper functions
     //
 
+    var parseClockSecondsToDisplay = function() {
+        var min = Math.floor(game.clockSeconds / 60);
+        var sec = game.clockSeconds - (min * 60);
+        if (sec < 10) {
+            sec = '0' + sec;
+        }
+        return min + ':' + sec;
+    };
     var drawWordCompletionSlider = function() {
         var timer = setInterval(function() {
             if (wordCompletionSlider && game.answers[game.minWordLength]) {
@@ -176,6 +195,33 @@
         window.location.hash = game.toHtmlAnchor();
     };
 
+    var endGame = function(delay) {
+        clearInterval(interval);
+        $('#timer').val('0:00');
+        $('.square span').css('color', 'black');
+        setTimeout(function () {
+            $('#timer').val(originalClockValue);
+            $('#timer').prop('disabled', false);
+            $('#pauseButton').hide();
+            $('#pauseButton').text('Pause');
+            $('#endButton').hide();
+            $('#shuffleButton').show();
+            $('#startButton').show();
+        }, delay);
+        $('#stdout').text('Final score: ' + game.scoreGuesses());
+        showMissedAnswers();
+        isGameInProgress = false;
+        isPaused = false;
+    };
+    var resetClock = function() {
+        isGameInProgress = false;
+        $('#timer').val(parseClockSecondsToDisplay());
+        $('#pauseButton').hide();
+        $('#endButton').hide();
+        $('#shuffleButton').show();
+        $('#startButton').show();
+    };
+
     var shuffleBoard = function() {
         var x = $('#sizex').val();
         var y = $('#sizey').val();
@@ -183,8 +229,9 @@
             game.resize({ x: x, y: y, onShuffleBoardCallback: onShuffleBoardCallback });
             refreshBoard();
             drawWordCompletionSlider();
+            resetClock();
         }
-        $('#guesses').empty();
+        $('#guesses').empty().removeClass('final-reveal');
     };
     var swipeHandler = function() {
         $(function() {
@@ -193,7 +240,11 @@
 
             $('.outer-square')
                 .mousedown(function() {
+                    if (isPaused) return;
                     isMouseDown = true;
+                    if (!isGameInProgress) {
+                        $('#startButton').click();  // auto-start the game upon first swiped word
+                    }
                     $(this).addClass('highlighted-starting-letter visited');
                     var id = $(this).find('span').data('squareId');
                     word.push(id);
@@ -204,6 +255,7 @@
                 });
 
             $('.square').mouseover(function(e) {
+                    if (isPaused) return;
                     var id = $(this).find('span').data('squareId');
                     if (isMouseDown) {
                         if ($(this).parent().hasClass('visited')) {
@@ -228,36 +280,48 @@
 
             $(document)
                 .mouseup(function() {
+                    if (isPaused) return;
                     isMouseDown = false;
 
-                    if (word.length >= game.minWordLength) {
-                        var results = game.submitWord(word);
-                        var formedWord = results[0];
-                        var resultCode = results[1];
+                    if (isGameInProgress) {  // make sure a word-drag that started before the timer expired, but didn't conclude until after the timer expired, is not alloewd in as a socre
+                        if (word.length >= game.minWordLength) {
+                            var results = game.submitWord(word);
+                            var formedWord = results[0];
+                            var resultCode = results[1];
 
-                        if (formedWord && resultCode !== ':duplicate' && resultCode !== ':impossible') {
-                            var newGuess = $('#newGuess').clone(false);
-                            newGuess.removeAttr('id');
-                            newGuess.removeClass('hidden');
-                            if (resultCode === ':correct') {
-                                newGuess.find('span:first-child').text(game.scoreGuess(formedWord));
-                            } else {
-                                newGuess.addClass('incorrectGuess');
+                            if (formedWord && resultCode !== ':duplicate' && resultCode !== ':impossible') {
+                                var newGuess = $('#newGuess').clone(false);
+                                newGuess.removeAttr('id');
+
+                                if (resultCode === ':correct') {
+                                    newGuess.addClass('correct-guess').find('span:first-child').text(game.scoreGuess(formedWord));
+                                    newGuess.addClass('flash-lightgreen');
+                                    newGuess.removeClass('hidden');
+                                } else {
+                                    if ($('#showIncorrectGuesses').prop('checked')) {
+                                        newGuess.removeClass('hidden');
+                                        newGuess.addClass('flash-lightgray');
+                                    };
+                                    newGuess.addClass('incorrect-guess');
+                                }
+                                newGuess.find('span:last-child').text(formedWord);
+                                newGuess.prependTo('#guesses');
+
+                                setTimeout(function () {
+                                    newGuess.removeClass('flash-lightgreen flash-lightgray');
+                                }, 3000);
                             }
-                            newGuess.find('span:last-child').text(formedWord);
 
-                            newGuess.prependTo('#guesses');
+                            var numAnswers = game.answers[game.minWordLength] ? game.answers[game.minWordLength].length : 0;
+                            wordCompletionSlider.slider('setValue', [game.correctGuesses.size, numAnswers]);
+                        } else if (word.length > 1) {
+                            $('#minwordlength').addClass('flash-red');
+                            $('#minwordlength').prev().addClass('flash-red');
+                            setTimeout(function () {
+                                $('#minwordlength').removeClass('flash-red');
+                                $('#minwordlength').prev().removeClass('flash-red');
+                            }, 750);
                         }
-
-                        var numAnswers = game.answers[game.minWordLength] ? game.answers[game.minWordLength].length : 0;
-                        wordCompletionSlider.slider('setValue', [game.correctGuesses.size, numAnswers]);
-                    } else if (word.length > 1) {
-                        $('#minwordlength').addClass('flash');
-                        $('#minwordlength').prev().addClass('flash');
-                        setTimeout(function(){
-                            $('#minwordlength').removeClass('flash');
-                            $('#minwordlength').prev().removeClass('flash');
-                        }, 750);
                     }
 
                     $('.outer-square').removeClass('highlighted highlighted-starting-letter visited');
@@ -281,6 +345,7 @@
     $('#minwords').val(game.minWords);
     $('#maxwords').val(game.maxWords === 0 ? 'any' : game.maxWords);
     $('#minwordlength').val(game.minWordLength);
+    $('#timer').val(parseClockSecondsToDisplay());
 
     //
     // snazzy keyboard controls
@@ -307,6 +372,12 @@
     $(window).bind('keydown', function(e) {
         switch (e.keyCode) {
             case 13:  // enter key
+                e.preventDefault();
+                if (!isGameInProgress) {
+                    $('#startButton').click();  // auto-start game upon first move
+                }
+                e.stopPropagation();
+                break;
             case 32:  // space bar
                 e.preventDefault();
                 shuffleBoard();
@@ -315,24 +386,28 @@
             case 37:
                 e.preventDefault();
                 decr_x();
+                shuffleBoard();
                 centerBoard();
                 e.stopPropagation();
                 break;
             case 38:
                 e.preventDefault();
                 decr_y();
+                shuffleBoard();
                 centerBoard();
                 e.stopPropagation();
                 break;
             case 39:
                 e.preventDefault();
                 incr_x();
+                shuffleBoard();
                 centerBoard();
                 e.stopPropagation();
                 break;
             case 40:
                 e.preventDefault();
                 incr_y();
+                shuffleBoard();
                 centerBoard();
                 e.stopPropagation();
                 break;
@@ -565,6 +640,32 @@
     });
     $('#minwordlength').change(minWordLengthCallback);
 
+    $('#timer').bind('keydown', function(e) {
+        switch (e.keyCode) {
+            case 13:  // enter key
+            case 32:  // space bar
+            case 37:
+            case 39:
+            case 38:
+            case 40:
+                e.stopPropagation();
+                break;
+            default:
+                break;
+        }
+    });
+
+    $('#startButton').bind('keydown', function(e) {
+        switch (e.keyCode) {
+            case 13:  // enter key
+            case 32:  // space bar
+                e.stopPropagation();
+                break;
+            default:
+                break;
+        }
+    });
+
     // game progression bar
     var wordCompletionSlider = $('#wordCompletionSlider').slider({
             min: 0,
@@ -579,6 +680,10 @@
             tooltip_split: true,
             formatter: function(value) {
                 var result = value;
+                if (result > 999) {
+                    var thousands = Math.floor(result / 1000);
+                    result = thousands + ',' + (result - (thousands * 1000));
+                }
                 if (game.answers[game.minWordLength]) {
                     result += ' word';
                     if (value !== 1) {
@@ -610,21 +715,135 @@
 
     $('#showIncorrectGuesses').change(function() {
         if (this.checked) {
-            $('.incorrectGuess').fadeIn();
+            $('.incorrect-guess').fadeTo("fast", 1.00, function() {
+                $(this).slideDown("slow", function() {
+                    $(this).show();
+                })
+            });
         } else {
-            $('.incorrectGuess').fadeOut();
+            $('.incorrect-guess').fadeTo("fast", 0.00, function() {
+                $(this).slideUp("fast", function() {
+                    $(this).hide();
+                });
+            });
         }
     });
 
-    // Start button
+    // Shuffle button
     $('#shuffleButton').click(function() {
         shuffleBoard();
-        centerBoard();
         $('#shuffleButton').tooltip('hide');
     });
     $('#shuffleButton').tooltip();
 
     $('#sizexy').tooltip();
+
+    $('#timer').change(function() {
+        game.clockSeconds = Number( parseTimer() );
+        $('#timer').val( parseClockSecondsToDisplay() );
+        window.location.hash = game.toHtmlAnchor();
+    });
+
+    //
+    // game clock
+    //
+    var showMissedAnswers = function() {
+        game.missedAnswers().forEach(function(answer) {
+            var missedAnswer = $('#newGuess').clone(false);
+            missedAnswer.removeAttr('id');
+            missedAnswer.removeClass('hidden');
+            missedAnswer.find('span:first-child').text(game.scoreGuess(answer));
+            missedAnswer.find('span:last-child').text(answer);
+            $('#guesses').append(missedAnswer);
+        });
+
+        $('#guesses li').detach().sort(function(a,b) {
+            var a_text = $(a).find('span:last-child').text();
+            var b_text = $(b).find('span:last-child').text();
+            if (a_text.length !== b_text.length) {
+                return b_text.length - a_text.length;
+            } else {
+                return $(a).find('span:last-child').text().localeCompare($(b).find('span:last-child').text());
+            }
+        }).appendTo('#guesses');
+        $('#guesses').addClass('final-reveal');
+    };
+    var interval, originalClockValue;
+    var startTimer = function(duration, display) {
+        originalClockValue = $('#timer').val();
+
+        var timer = (function(start) {
+            return function () {
+                // get the number of seconds that have elapsed since startTimer() was called
+                var diff = duration - (((Date.now() - start) / 1000) | 0);
+
+                // does the same job as parseInt truncates the float
+                var minutes = (diff / 60) | 0;
+                var seconds = (diff % 60) | 0;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.val(minutes + ":" + seconds);
+
+                if (diff <= 0) {  // game has ended...
+                    endGame(1500);
+                }
+            }
+        })(Date.now());
+
+        interval = setInterval(timer, 1000);
+    };
+    var parseTimer = function() {
+        var val = $('#timer').val();
+        if (val.indexOf(':') !== -1) {
+            var parts = val.split(':');
+            return Number(parts[0])*60 + Number(parts[1]);
+        } else {
+            return Number(val);
+        }
+    };
+
+    // Start/Pause/End buttons
+    var isGameInProgress = false;
+    $('#startButton').tooltip();
+    $('#startButton').click(function() {
+        $('#startButton').tooltip('hide');
+
+        if (!isGameInProgress) {
+            $('#guesses').empty();
+            isGameInProgress = true;
+            $('#shuffleButton').hide();
+            $('#startButton').hide();
+            $('#pauseButton').show();
+            $('#endButton').show();
+            $('#timer').prop('disabled', true);
+            $('#timer').addClass('flash-green');
+            $('#timer').prev().addClass('flash-green');
+            setTimeout(function () {
+                $('#timer').removeClass('flash-green');
+                $('#timer').prev().removeClass('flash-green');
+            }, 5000);
+            startTimer(parseTimer(), $('#timer'));
+        }
+    });
+
+    var isPaused = false;
+    $('#pauseButton').click(function() {
+        if (isPaused) {
+            isPaused = false;
+            $('.square span').css('color', 'black');
+            $('#pauseButton').text('Pause');
+            startTimer(parseTimer(), $('#timer'));
+        } else {
+            isPaused = true;
+            $('.square span').css('color', 'transparent');
+            $('#pauseButton').text('Resume');
+            clearInterval(interval);
+        }
+    });
+
+    $('#endButton').click(function() {
+        endGame(0);
+    });
 
     //
     // initialize board resizing

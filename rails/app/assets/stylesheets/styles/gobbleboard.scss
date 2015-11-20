@@ -25,14 +25,73 @@
 #resizable {
     padding: 0.5rem;
     display: inline-block;
+    white-space: nowrap;
 
     .draggable-arrow {
         @include disable-text-selection;
 
-        padding: rem-calc(70) 0 0 0;
         font-size: rem-calc(23);
         color: white;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    }
+
+    .top-controls {
+        @include disable-text-selection;
+
+        .col-sm-4 {
+            display: table;
+            height: rem-calc(52);
+        }
+
+        max-width: 600px;
+        padding: 0.5rem;
+        padding: rem-calc(90) 0 0 0;
+        white-space: nowrap;
+        width: 100%;
+
+        .centerBlock {
+            display: table-cell;
+            margin: 0 auto;
+            padding-left: rem-calc(30);
+            padding-right: rem-calc(30);
+
+            vertical-align:middle;
+            text-align:center;
+
+        }
+        .leftBlock {
+            display: table;
+            margin: 0 auto 0 0;
+        }
+
+        #shuffleButton {
+            padding-left: rem-calc(30);
+            padding-right: rem-calc(30);
+        }
+        #endButton {
+            background-color: darkcyan;
+            padding-left: rem-calc(30);
+            padding-right: rem-calc(30);
+            display: none;
+        }
+
+        #startButton {
+            width: rem-calc(120);
+            padding-left: rem-calc(30);
+            padding-right: rem-calc(30);
+        }
+        #pauseButton {
+            background-color: darkcyan;
+            width: rem-calc(134);
+            padding-left: rem-calc(30);
+            padding-right: rem-calc(30);
+            display: none;
+        }
+
+        #timer {
+            width: rem-calc(60);
+        }
+
     }
 
     .resizable-arrow {
@@ -259,40 +318,156 @@
     background:transparent;
 }
 
-
 .tooltip.tooltip-right .tooltip-arrow, .tooltip.bs-tether-element-attached-left .tooltip-arrow {
     border-right-color: #eceeef;
 }
+.tooltip.tooltip-left .tooltip-arrow, .tooltip.bs-tether-element-attached-right .tooltip-arrow {
+    border-left-color: #eceeef;
+}
+
 .tooltip-inner {
     background-color: #eceeef;
     color: #55595c;
 }
 
-.flash {
-    -moz-animation: flash 1s ease-out;
+.flash-red {
+    -moz-animation: flash-red  1s ease-out;
     -moz-animation-iteration-count: 1;
 
-    -webkit-animation: flash 1s ease-out;
+    -webkit-animation: flash-red  1s ease-out;
     -webkit-animation-iteration-count: 1;
 
-    -ms-animation: flash 1s ease-out;
+    -ms-animation: flash-red  1s ease-out;
     -ms-animation-iteration-count: 1;
 }
-
-@-webkit-keyframes flash {
+@-webkit-keyframes flash-red {
+    0% { background-color: none; }
+    50% { background-color: red; }
+    100% { background-color: none; }
+}
+@-moz-keyframes flash-red {
+    0% { background-color: none; }
+    50% { background-color: red; }
+    100% { background-color: none; }
+}
+@-ms-keyframes flash-red {
     0% { background-color: none; }
     50% { background-color: red; }
     100% { background-color: none; }
 }
 
-@-moz-keyframes flash {
+.flash-green {
+    -moz-animation: flash-green 1s ease-out;
+    -moz-animation-iteration-count: 1;
+
+    -webkit-animation: flash-green 1s ease-out;
+    -webkit-animation-iteration-count: 1;
+
+    -ms-animation: flash-green 1s ease-out;
+    -ms-animation-iteration-count: 1;
+}
+@-webkit-keyframes flash-green {
     0% { background-color: none; }
-    50% { background-color: red; }
+    50% { background-color: green; }
+    100% { background-color: none; }
+}
+@-moz-keyframes flash-green {
+    0% { background-color: none; }
+    50% { background-color: green; }
+    100% { background-color: none; }
+}
+@-ms-keyframes flash-green {
+    0% { background-color: none; }
+    50% { background-color: green; }
     100% { background-color: none; }
 }
 
-@-ms-keyframes flash {
+.flash-lightgreen {
+    -moz-animation: flash-lightgreen 0.75s ease-out;
+    -moz-animation-iteration-count: 1;
+
+    -webkit-animation: flash-lightgreen 0.75s ease-out;
+    -webkit-animation-iteration-count: 1;
+
+    -ms-animation: flash-lightgreen 0.75s ease-out;
+    -ms-animation-iteration-count: 1;
+}
+@-webkit-keyframes flash-lightgreen {
     0% { background-color: none; }
-    50% { background-color: red; }
+    50% { background-color: lightgreen; }
+    100% { background-color: none; }
+}
+@-moz-keyframes flash-lightgreen {
+    0% { background-color: none; }
+    50% { background-color: lightgreen; }
+    100% { background-color: none; }
+}
+@-ms-keyframes flash-lightgreen{
+    0% { background-color: none; }
+    50% { background-color: lightgreen; }
+    100% { background-color: none; }
+}
+
+.flash-lightgray {
+    -moz-animation: flash-lightgray  0.75s ease-out;
+    -moz-animation-iteration-count: 1;
+
+    -webkit-animation: flash-lightgray  0.75s ease-out;
+    -webkit-animation-iteration-count: 1;
+
+    -ms-animation: flash-lightgray 0.75s ease-out;
+    -ms-animation-iteration-count: 1;
+}
+@-webkit-keyframes flash-lightgray {
+    0% { background-color: none; }
+    50% { background-color: lightgray; }
+    100% { background-color: none; }
+}
+@-moz-keyframes flash-lightgray {
+    0% { background-color: none; }
+    50% { background-color: lightgray; }
+    100% { background-color: none; }
+}
+@-ms-keyframes flash-lightgray{
+    0% { background-color: none; }
+    50% { background-color: lightgray; }
+    100% { background-color: none; }
+}
+
+ul.final-reveal {
+    li.correct-guess {
+        background-color: lightgreen;
+    }
+    li.incorrect-guess {
+        background-color: lightgray;
+    }
+}
+
+.clock-10-second-mark {
+    background-color: yellow;
+}
+.clock-5-second-mark {
+    -moz-animation: yellow 1s ease-out;
+    -moz-animation-iteration-count: 5;
+
+    -webkit-animation: yellow 1s  ease-out;
+    -webkit-animation-iteration-count: 5;
+
+    -ms-animation: yellow 1s ease-out;
+    -ms-animation-iteration-count: 5;
+}
+@-webkit-keyframes clock-5-second-mark {
+    0% { background-color: none; }
+    50% { background-color: yellow; }
+    100% { background-color: none; }
+}
+@-moz-keyframes clock-5-second-mark {
+    0% { background-color: none; }
+    50% { background-color: yellow; }
+    100% { background-color: none; }
+}
+@-ms-keyframes clock-5-second-mark{
+    0% { background-color: none; }
+    50% { background-color: yellow; }
     100% { background-color: none; }
 }
