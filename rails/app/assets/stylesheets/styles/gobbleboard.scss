@@ -23,6 +23,10 @@
 }
 
 #resizable {
+    &.hidden {
+        opacity: 0;
+    }
+
     padding: 0.5rem;
     display: inline-block;
     white-space: nowrap;

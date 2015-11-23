@@ -299,12 +299,14 @@ ul.nav li:hover > .dropdown-menu {
         // also, add a little bottom-right link about the image (where it was taken from;  what it represents)
         // Melissa's idea:  try some grayscale(?) or fading on these images so that they're competing as much with the foreground objects (chessboard, side panes, etc)
         // /TODO
-        background-image: url(../assets/images/backgrounds/cygx1_ill.jpg);
+
+        // background-image: url(../assets/images/backgrounds/cygx1_ill.jpg);
+        background-image: url(http://2.bp.blogspot.com/-WovJOkeAMXM/VkQA8Tb2LPI/AAAAAAAAO8c/pPmyjMIxHvA/s1600/102_4947.JPG);
     }
 }
 @media (min-width: 768px) {
     #topContainer {
-        background-image: url(../assets/images/backgrounds/cygx1_ill.jpg);
+        background-image: url(http://2.bp.blogspot.com/-WovJOkeAMXM/VkQA8Tb2LPI/AAAAAAAAO8c/pPmyjMIxHvA/s1600/102_4947.JPG);
     }
 }
 
@@ -313,7 +315,11 @@ ul.nav li:hover > .dropdown-menu {
     background-size: cover;  // TODO is cover really what I want here?
     background-position: center top;
     background-color: #27ae60;
-    background-image: url(../assets/images/backgrounds/cygx1_ill.jpg);
+    background-image: url(
+        http://hdwallpicx.com/wp-content/uploads/2015/03/autumn-leaves-wallpapers-hd-1080p-1920x1080-desktop-02.jpg
+    );
+//
+//http://2.bp.blogspot.com/-WovJOkeAMXM/VkQA8Tb2LPI/AAAAAAAAO8c/pPmyjMIxHvA/s1600/102_4947.JPG);
 }
 
 #leftPane, #rightPane {

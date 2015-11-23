@@ -28,18 +28,25 @@ const EventLog = require('./../src/event_log');
 //
 // TODO part of the scoring strategy -- parameterize the minimum word length
 //
-// TODO game timer with optional increment value
+// TODO game timer with ** optional increment value **
 //
 // TODO end game when all words are found
 ////
 // TODO let user decide if words are rejected immediately, or scored immediately
 //
-// TODO add a pause button that when clicked, obscures the board
-//
 // TODO let users type words instead of swiping;
 // TODO -- possibly match each letter keystroke to first matching square on board;
 //      -- repeat the keystroke to advance to next h?  no that wouldn't work;
 //      -- space key to advance to next match... ugh...complicated....
+//
+// TODO allow user to submit their own dice;  see comment in randomizer_strategy.js
+//
+// TODO wire up the Q includes U feature?
+//
+// TODO bug -- 6x6 original dice probabilities aren't being honored yet
+//
+// TODO bug -- scoring system for 6x6 is currently counting 0 point words
+//
 class Gobble {
 
     constructor(options = {}) {
@@ -168,6 +175,14 @@ class Gobble {
         this.eventLog = new EventLog();
 
         this.shuffleBoard(options.onShuffleBoardCallback);
+    }
+
+    startGame() {
+        this.eventLog.add("Game sesssion started for " + this.toHtmlAnchor());
+    }
+
+    endGame() {
+        this.eventLog.add("Final score was " + this.scoreGuesses());
     }
 
     submitWord(moves /* array of board index values */) {

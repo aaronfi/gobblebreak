@@ -48,7 +48,7 @@
     </div>
 
     <div class="col-sm-8">
-        <div class="ui-widget-content ui-resizable" id="resizable">
+        <div class="ui-widget-content ui-resizable hidden" id="resizable">
 
             <div class="container top-controls">
                 <div class="row">
@@ -212,6 +212,7 @@
         showMissedAnswers();
         isGameInProgress = false;
         isPaused = false;
+        game.endGame();
     };
     var resetClock = function() {
         isGameInProgress = false;
@@ -333,12 +334,12 @@
     //
     // init Game object and then render it
     //
-
     var word = [];
     $('#board').html(game.toHtml());
     swipeHandler();
     drawBoard();
     centerBoard();
+    $('#resizable').css({ 'opacity': 1.00 });
 
     $('#sizex').val(game.x);
     $('#sizey').val(game.y);
@@ -604,7 +605,7 @@
         }
     });
 
-    //minwordlength input
+    // minwordlength input
     var decr_minlength = function() {
         var minlength = Math.max(2, parseInt($('#minwordlength').val(), 10) - 1);
         $('#minwordlength').val(minlength);
@@ -811,6 +812,7 @@
         if (!isGameInProgress) {
             $('#guesses').empty();
             isGameInProgress = true;
+            game.startGame();
             $('#shuffleButton').hide();
             $('#startButton').hide();
             $('#pauseButton').show();
