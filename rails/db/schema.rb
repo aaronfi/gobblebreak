@@ -17,51 +17,15 @@ ActiveRecord::Schema.define(version: 20140422062725) do
   enable_extension "plpgsql"
   enable_extension "hstore"
 
-  create_table "puzzle_viewings", force: :cascade do |t|
+  create_table "game_sessions", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "puzzle_id"
-    t.datetime "start_date"
-    t.datetime "end_date"
-    t.string   "replay_log"
-    t.float    "num_seconds_viewed"
-    t.float    "num_seconds_to_solve"
-    t.boolean  "was_solved"
-    t.boolean  "was_answer_asked_for"
-    t.integer  "num_attempts"
-    t.integer  "num_hints_used"
-    t.integer  "level_of_hint_used"
-    t.float    "user_current_rating"
+    t.text     "game_url"
+    t.text     "event_log"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "puzzle_viewings", ["puzzle_id"], name: "index_puzzle_viewings_on_puzzle_id", using: :btree
-  add_index "puzzle_viewings", ["user_id"], name: "index_puzzle_viewings_on_user_id", using: :btree
-
-  create_table "puzzles", force: :cascade do |t|
-    t.string   "obsfucated_id",    limit: 8
-    t.string   "fen",              limit: 128
-    t.text     "movetext"
-    t.text     "pgn"
-    t.integer  "num_views"
-    t.integer  "num_completions"
-    t.integer  "num_ratings"
-    t.float    "avg_rating"
-    t.float    "difficulty_score"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "roles", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "resource_id"
-    t.string   "resource_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id", using: :btree
-  add_index "roles", ["name"], name: "index_roles_on_name", using: :btree
+  add_index "game_sessions", ["user_id"], name: "index_game_sessions_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "name"
@@ -92,12 +56,5 @@ ActiveRecord::Schema.define(version: 20140422062725) do
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-
-  create_table "users_roles", id: false, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "role_id"
-  end
-
-  add_index "users_roles", ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id", using: :btree
 
 end

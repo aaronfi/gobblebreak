@@ -32,7 +32,6 @@ gem 'rails_12factor', group: :production   # https://devcenter.heroku.com/articl
 #gem 'jquery-cdn'               # TODO figure this out # jQuery 2.x;  the jquery-rails gem was still only offering jQuery 1.10, as of 4/20/14.
 gem 'annotate'                  # used to generate comments in each of your model files, documenting that model's underlying SQL schema
 gem 'bcrypt-ruby', '~> 3.0.0'   # use ActiveModel has_secure_password
-gem 'cancan', '>= 1.6.10'
 gem 'closure-compiler'          # Google's Closure Compiler for javascript minimization and performance enhancements
 gem 'font-awesome-rails'
 gem 'hstore_accessor'           # for accessing Postgres hstore columns as objects
@@ -45,11 +44,9 @@ gem 'RedCloth'                  # used to generate the Ruby-on-Rails tutorial do
 
 gem 'sass-rails', '~> 5.0'      # use SCSS for stylesheets
 gem 'foundation-rails'
-#gem 'compass-rails', '~> 2.0'   # use the Compass framework, https://github.com/compass/compass-rails -- it builds atop SCSS to give you helps like "rem-calc(10)"
 
 gem 'turbolinks'                # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 
-gem 'rolify', '>= 4.1.1'
 gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes

@@ -86,52 +86,10 @@ class CreateInitialSchemas < ActiveRecord::Migration
       t.string :image
     end
 
-    # TODO(aaron,4/22/14) add some kind of user_history table that tracks changes to key values in user table that change over time, e.g. email address, name;
-    # basically, be lossless and record all field deltas
-
-    create_table :roles do |t|
-      t.string :name
-      t.references :resource, :polymorphic => true
-
-      t.timestamps
-    end
-
-    create_table :users_roles, :id => false do |t|
-      t.references :user
-      t.references :role
-    end
-
-    create_table :puzzles do |t|
-      t.string :obsfucated_id, limit: 8
-      t.string :fen, limit: 128
-      t.text :movetext
-      t.text :pgn
-      t.integer :num_views
-      t.integer :num_completions
-      t.integer :num_ratings
-      t.float :avg_rating
-      t.float :difficulty_score
-
-      t.timestamps
-    end
-
-    create_table :puzzle_viewings do |t|
+    create_table :game_sessions do |t|
       t.references :user, index: true
-      t.references :puzzle, index: true
-
-      t.timestamp :start_date
-      t.timestamp :end_date
-
-      t.string :replay_log
-
-      t.float :num_seconds_viewed
-      t.float :num_seconds_to_solve
-      t.boolean :was_solved
-      t.boolean :was_answer_asked_for
-      t.integer :num_attempts
-      t.integer :num_hints_used
-      t.integer :level_of_hint_used
-      t.float :user_current_rating
+      t.text :game_url
+      t.text :event_log
 
       t.timestamps
     end
@@ -141,10 +99,5 @@ class CreateInitialSchemas < ActiveRecord::Migration
     add_index :users, :confirmation_token,   :unique => true
     # add_index :users, :unlock_token,         :unique => true
     # add_index :users, :authentication_token, :unique => true
-
-    add_index(:roles, :name)
-    add_index(:roles, [ :name, :resource_type, :resource_id ])
-    add_index(:users_roles, [ :user_id, :role_id ])
-
   end
 end

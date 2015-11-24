@@ -213,6 +213,20 @@
         isGameInProgress = false;
         isPaused = false;
         game.endGame();
+
+        // send back our game session event log
+        jQuery.ajax({
+            type: 'POST',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+            },
+            url: '/game_sessions',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({ 'game_url': game.toHtmlAnchor(), 'event_log': game.eventLog }),
+            success: function(json) { }
+        });
+
     };
     var resetClock = function() {
         isGameInProgress = false;
@@ -224,6 +238,10 @@
     };
 
     var shuffleBoard = function() {
+        if (isGameInProgress) {
+            return;
+        }
+
         var x = $('#sizex').val();
         var y = $('#sizey').val();
         if (x !== game.x || y !== game.y) {

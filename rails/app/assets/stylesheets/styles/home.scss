@@ -214,7 +214,6 @@ a.dropdown-toggle {
 }
 
 .sign-in-with-email {
-
     input {
         background-color: #fff;
         border-radius: rem-calc(2);
@@ -291,35 +290,12 @@ ul.nav li:hover > .dropdown-menu {
     max-width: none;
 }
 
-@media (min-width: 1200px) {
-    #topContainer {
-        // TODO need to optimize these images;  make multiple versions of their sizes, one for each media query below;  also need to add more images;
-        // should probably (in Rails somewhere) make a widget that rotates the background;
-        // that, or have client-side JS rotate the image for the user, on puzzle change, or every n seconds
-        // also, add a little bottom-right link about the image (where it was taken from;  what it represents)
-        // Melissa's idea:  try some grayscale(?) or fading on these images so that they're competing as much with the foreground objects (chessboard, side panes, etc)
-        // /TODO
-
-        // background-image: url(../assets/images/backgrounds/cygx1_ill.jpg);
-        background-image: url(http://2.bp.blogspot.com/-WovJOkeAMXM/VkQA8Tb2LPI/AAAAAAAAO8c/pPmyjMIxHvA/s1600/102_4947.JPG);
-    }
-}
-@media (min-width: 768px) {
-    #topContainer {
-        background-image: url(http://2.bp.blogspot.com/-WovJOkeAMXM/VkQA8Tb2LPI/AAAAAAAAO8c/pPmyjMIxHvA/s1600/102_4947.JPG);
-    }
-}
-
 #topContainer {
     background-repeat: no-repeat;
-    background-size: cover;  // TODO is cover really what I want here?
+    background-size: cover;
     background-position: center top;
     background-color: #27ae60;
-    background-image: url(
-        http://hdwallpicx.com/wp-content/uploads/2015/03/autumn-leaves-wallpapers-hd-1080p-1920x1080-desktop-02.jpg
-    );
-//
-//http://2.bp.blogspot.com/-WovJOkeAMXM/VkQA8Tb2LPI/AAAAAAAAO8c/pPmyjMIxHvA/s1600/102_4947.JPG);
+    background-image: url(../assets/images/backgrounds/centerpiece.jpg);
 }
 
 #leftPane, #rightPane {
@@ -330,92 +306,6 @@ ul.nav li:hover > .dropdown-menu {
         margin-bottom: rem-calc(13);
     }
 }
-
-#debug1, #debug3 {  /* TODO(aaron,4/12) eventually remove this debug1, debug2 */
-    margin: rem-calc(8);
-    width: rem-calc(240);
-    color: white;
-    background-color: transparent;
-    height: rem-calc(240);
-    font-family: monospace;
-    resize: none;
-    border: none;
-    overflow: auto;
-    outline: none;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-}
-
-#moveList {
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 13px;
-
-    textarea {
-        color: white;
-        border-radius: 6px;
-        width: 70%;
-        height: 90px;
-        resize: none;
-        font-family: monospace;
-        border: none;
-        overflow: auto;
-        outline: none;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
-        background-color: transparent;
-    }
-}
-
-// TODO rename from jumbotron;  you yanked this code from chesscademy;
-.jumbotron {
-    padding: 30px;
-    margin-bottom: 30px;
-    color: inherit;
-    background-color: #eee
-}
-
-.jumbotron h1,.jumbotron .h1 {
-    color: inherit
-}
-
-.jumbotron p {
-    margin-bottom: 15px;
-    font-size: 21px;
-    font-weight: 200
-}
-
-.container .jumbotron {
-    border-radius: 6px
-}
-
-.jumbotron .container {
-    max-width: 100%
-}
-
-#button1 {
-    clear:both;
-}
-
-@media screen and (min-width: 768px) {
-    .jumbotron {
-        padding-top:48px;
-        padding-bottom: 48px
-    }
-
-    .container .jumbotron {
-        padding-right: 60px;
-        padding-left: 60px
-    }
-
-    .jumbotron h1,.jumbotron .h1 {
-        font-size: 63px
-    }
-}
-
-// /TODO rename jumbotron
 
 #subheading {
     text-align: center;
@@ -455,42 +345,4 @@ ul.nav li:hover > .dropdown-menu {
     .user_1 {
         background: #1f77b4
     }
-}
-
-
-
-
-
-
-//
-// TODO everything below this is not being used at the moment
-//
-
-#search {
-    padding: 10px 36px 10px 10px;
-    -webkit-transition: all .5s;
-    -o-transition: all .5s;
-    transition: all .5s;
-}
-
-#searchButton {
-    height: 40px;
-    width: 44px;
-    border: 0 none;
-    background: dimgrey url(http://ssl.cdn-redfin.com/v72.4/images/buttons/searchIcon-2x.png) no-repeat center; // TODO replace with your own asset path
-    background-size: 16px 17px;
-    -webkit-appearance: none;
-    outline: none;
-    position: relative;
-    z-index: 2;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-border-radius: 0 2px 2px 0;
-    -khtml-border-radius: 0 2px 2px 0;
-    -moz-border-radius: 0 2px 2px 0;
-    -ms-border-radius: 0 2px 2px 0;
-    -o-border-radius: 0 2px 2px 0;
-    border-radius: 0 2px 2px 0;
 }

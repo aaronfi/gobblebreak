@@ -210,6 +210,14 @@
         vertical-align: top;
         margin-top: rem-calc(20);
 
+        //.tooltip-inner {
+        //    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        //    color: white;
+        //    font-size: 1rem;
+        //    background-color: transparent;
+        //    z-index: 0;
+        //}
+
         .tooltip {
             z-index: 0;
         }
@@ -307,7 +315,7 @@
 
         .c-checkbox {
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            color: #999;
+            color: white;
         }
     }
 }
