@@ -28,6 +28,8 @@ gem 'omniauth'
 gem 'omniauth-facebook'
 gem 'omniauth-google-oauth2'
 
+gem 'puma'  # Use this web server instead of Rails' built-in default of WEBrick, which is single-threaded and meant only for development purposes.  https://devcenter.heroku.com/articles/deploying-rails-applications-with-the-puma-web-server
+
 gem 'rails_12factor', group: :production   # https://devcenter.heroku.com/articles/getting-started-with-rails4#heroku-gems
 
 gem 'closure-compiler'          # Google's Closure Compiler for javascript minimization and performance enhancements
