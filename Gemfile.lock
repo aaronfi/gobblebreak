@@ -85,6 +85,7 @@ GEM
     hashie (3.4.3)
     hstore_accessor (1.0.3)
       activerecord (>= 4.0.0)
+    htmlcompressor (0.3.0)
     i18n (0.7.0)
     jquery-rails (4.0.5)
       rails-dom-testing (~> 1.0)
@@ -94,7 +95,6 @@ GEM
       railties (>= 3.2.16)
     json (1.8.3)
     jwt (1.5.2)
-    kgio (2.10.0)
     konacha (3.7.0)
       actionpack (>= 3.1, < 5)
       capybara
@@ -182,7 +182,6 @@ GEM
       activesupport (= 4.2.4)
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
-    raindrops (0.15.0)
     rake (10.4.2)
     ref (2.0.0)
     responders (2.1.0)
@@ -208,10 +207,9 @@ GEM
     tilt (2.0.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    unicorn (5.0.1)
-      kgio (~> 2.6)
-      rack
-      raindrops (~> 0.7)
+    uglifier (2.7.2)
+      execjs (>= 0.3.0)
+      json (>= 1.8.0)
     warden (1.2.3)
       rack (>= 1.0)
     websocket-driver (0.6.3)
@@ -231,6 +229,7 @@ DEPENDENCIES
   font-awesome-rails
   foundation-rails
   hstore_accessor
+  htmlcompressor
   jquery-rails
   jquery-ui-rails (~> 5.0)
   konacha
@@ -245,7 +244,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   therubyracer
   twitter-bootstrap-rails!
-  unicorn
+  uglifier
 
 BUNDLED WITH
    1.10.6

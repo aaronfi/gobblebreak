@@ -21,3 +21,5 @@
 
 # ignore our in-directory webpack build's node_modules directory;  equivalent to Ruby's gems;  all are packages
 node_modules
+
+/rails

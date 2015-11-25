@@ -36,14 +36,12 @@ gem 'closure-compiler'          # Google's Closure Compiler for javascript minim
 gem 'font-awesome-rails'
 gem 'foundation-rails'          # a CSS framework library, similar to Twitter's Bootstrap.  We're using it just for its rem-calc() function, nothing else.
 gem 'hstore_accessor'           # for accessing Postgres hstore columns as objects
+gem 'htmlcompressor'
 gem 'jquery-rails'              # use jquery as the JavaScript library
 gem 'jquery-ui-rails', '~> 5.0' # use the jquery-ui library;  I'm just using 'jquery-ui/resizable' for now
 gem 'pg'                        # use postgresql as the database for Active Record
 gem 'rails', '4.2.4'            # bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'sass-rails', '~> 5.0'      # use SCSS for stylesheets. We are not using LESS.  We are using SCSS.
 gem 'therubyracer'              # needed by hstore_accessor, evidently... 
-
 gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
-
-# Use unicorn as the app server
-gem 'unicorn'
+gem 'uglifier'
