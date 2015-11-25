@@ -39,6 +39,7 @@ gem 'jquery-ui-rails', '~> 5.0' # use the jquery-ui library;  I'm just using 'jq
 gem 'pg'                        # use postgresql as the database for Active Record
 gem 'rails', '4.2.4'            # bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'sass-rails', '~> 5.0'      # use SCSS for stylesheets. We are not using LESS.  We are using SCSS.
+gem 'therubyracer'              # needed by hstore_accessor, evidently... 
 
 gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 
