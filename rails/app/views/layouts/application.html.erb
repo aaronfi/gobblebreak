@@ -70,36 +70,20 @@ Breadcrumbs replace the URL with a Breadcrumb, a list of links indicating a hier
         <%= csrf_meta_tags %>
 
         <%= stylesheet_link_tag "application", :media => "all" %>
-
-        <!-- For third-generation iPad with high-resolution Retina display: -->
-        <!-- Size should be 144 x 144 pixels -->
-        <%= favicon_link_tag 'apple-touch-icon-144x144-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '144x144' %>
-        <!-- For iPhone with high-resolution Retina display: -->
-        <!-- Size should be 114 x 114 pixels -->
-        <%= favicon_link_tag 'apple-touch-icon-114x114-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '114x114' %>
-        <!-- For first- and second-generation iPad: -->
-        <!-- Size should be 72 x 72 pixels -->
-        <%= favicon_link_tag 'apple-touch-icon-72x72-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '72x72' %>
-        <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-        <!-- Size should be 57 x 57 pixels -->
-        <%= favicon_link_tag 'apple-touch-icon-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png' %>
-        <!-- For all other devices -->
-        <!-- Size should be 32 x 32 pixels -->
-        <%= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
     </head>
     <body>
-        <!-- Place at the end of the document so the pages load faster
-            TODO(aaronfi) loading at the end, causes other page-specific js to break;
-            can i somehow get away with putting this last -->
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-70658609-1', 'auto');
+            ga('send', 'pageview');
+        </script>
         <%= javascript_include_tag "application" %>
-
         <%= render 'layouts/header' %>
-
-        <!--TODO(aaronfi) confirm that bootstrap_flash adds messages; -->
-        <!--try a sample message to confirm look/feel-->
-        <%= bootstrap_flash %>
         <%= yield %>
         <%= render 'layouts/footer' %>
-
     </body>
 </html>

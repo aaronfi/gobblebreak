@@ -11,9 +11,9 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require jquery
-//= require jquery.ui.resizable
-//= require jquery.ui.draggable
-//= require jquery.ui.position
+//= require jquery-ui/resizable
+//= require jquery-ui/draggable
+//= require jquery-ui/position
 //= require vendor/jqconsole.min
 // You generate this file by running "webpack" in your ./gobble directory. TODO see if you can get rails to automatically do this as part of "rails server"
 //= require generated/gobble-bundle

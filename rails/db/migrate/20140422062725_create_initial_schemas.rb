@@ -32,7 +32,7 @@ class CreateInitialSchemas < ActiveRecord::Migration
 
     # Because you've been manually editing this initial migrations file by hand, instead of creating a new migration
     # file for each change you want to try out, here are the steps you need to take to get your schema changes
-    # in this file to actually be applied to the databse:  (Rails, by default, doesn't replay all migrations, it just
+    # in this file to actually be applied to the database:  (Rails, by default, doesn't replay all migrations, it just
     # uses the latest snapshot in schema.rb)
     #
     # (1) rm ~/code/gobblebreak/rails/db/schema.rb

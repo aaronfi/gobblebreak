@@ -1,6 +1,6 @@
 
 @import 'foundation/functions';  // gives us rem-calc()
-@import 'jquery.ui.resizable.css';
+@import 'jquery-ui/resizable.css';
 @import 'base/shared';
 
 // NOTE: this disables the "bounce" in modern browsers when scrolling past page top or bottom.  http://stackoverflow.com/questions/12046315/prevent-overscrolling-of-web-page
