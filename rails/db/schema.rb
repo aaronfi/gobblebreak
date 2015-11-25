@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20140422062725) do
 
   create_table "game_sessions", force: :cascade do |t|
     t.integer  "user_id"
+    t.string   "session_id"
     t.text     "game_url"
     t.text     "event_log"
     t.datetime "created_at"

@@ -210,14 +210,6 @@
         vertical-align: top;
         margin-top: rem-calc(20);
 
-        //.tooltip-inner {
-        //    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-        //    color: white;
-        //    font-size: 1rem;
-        //    background-color: transparent;
-        //    z-index: 0;
-        //}
-
         .tooltip {
             z-index: 0;
         }
@@ -341,110 +333,39 @@
     background-color: #eceeef;
     color: #55595c;
 }
+@mixin flash($classname, $midway_color, $duration: 1s, $starting_color: none) {
+    .#{$classname} {
+        -moz-animation: $classname $duration ease-out;
+        -moz-animation-iteration-count: 1;
+        -webkit-animation: $classname $duration ease-out;
+        -webkit-animation-iteration-count: 1;
+        -ms-animation: $classname $duration ease-out;
+        -ms-animation-iteration-count: 1;
+    }
 
-.flash-red {
-    -moz-animation: flash-red  1s ease-out;
-    -moz-animation-iteration-count: 1;
-
-    -webkit-animation: flash-red  1s ease-out;
-    -webkit-animation-iteration-count: 1;
-
-    -ms-animation: flash-red  1s ease-out;
-    -ms-animation-iteration-count: 1;
-}
-@-webkit-keyframes flash-red {
-    0% { background-color: none; }
-    50% { background-color: red; }
-    100% { background-color: none; }
-}
-@-moz-keyframes flash-red {
-    0% { background-color: none; }
-    50% { background-color: red; }
-    100% { background-color: none; }
-}
-@-ms-keyframes flash-red {
-    0% { background-color: none; }
-    50% { background-color: red; }
-    100% { background-color: none; }
-}
-
-.flash-green {
-    -moz-animation: flash-green 1s ease-out;
-    -moz-animation-iteration-count: 1;
-
-    -webkit-animation: flash-green 1s ease-out;
-    -webkit-animation-iteration-count: 1;
-
-    -ms-animation: flash-green 1s ease-out;
-    -ms-animation-iteration-count: 1;
-}
-@-webkit-keyframes flash-green {
-    0% { background-color: none; }
-    50% { background-color: green; }
-    100% { background-color: none; }
-}
-@-moz-keyframes flash-green {
-    0% { background-color: none; }
-    50% { background-color: green; }
-    100% { background-color: none; }
-}
-@-ms-keyframes flash-green {
-    0% { background-color: none; }
-    50% { background-color: green; }
-    100% { background-color: none; }
+    @-webkit-keyframes #{$classname} {
+        0%   { background-color: $starting_color; }
+        50%  { background-color: $midway_color;  }
+        100% { background-color: none; }
+    }
+    @-moz-keyframes #{$classname} {
+        0%   { background-color: $starting_color; }
+        50%  { background-color: $midway_color;  }
+        100% { background-color: none; }
+    }
+    @-ms-keyframes #{$classname} {
+        0%   { background-color: $starting_color; }
+        50%  { background-color: $midway_color;  }
+        100% { background-color: none; }
+    }
 }
 
-.flash-lightgreen {
-    -moz-animation: flash-lightgreen 0.75s ease-out;
-    -moz-animation-iteration-count: 1;
-
-    -webkit-animation: flash-lightgreen 0.75s ease-out;
-    -webkit-animation-iteration-count: 1;
-
-    -ms-animation: flash-lightgreen 0.75s ease-out;
-    -ms-animation-iteration-count: 1;
-}
-@-webkit-keyframes flash-lightgreen {
-    0% { background-color: none; }
-    50% { background-color: lightgreen; }
-    100% { background-color: none; }
-}
-@-moz-keyframes flash-lightgreen {
-    0% { background-color: none; }
-    50% { background-color: lightgreen; }
-    100% { background-color: none; }
-}
-@-ms-keyframes flash-lightgreen{
-    0% { background-color: none; }
-    50% { background-color: lightgreen; }
-    100% { background-color: none; }
-}
-
-.flash-lightgray {
-    -moz-animation: flash-lightgray  0.75s ease-out;
-    -moz-animation-iteration-count: 1;
-
-    -webkit-animation: flash-lightgray  0.75s ease-out;
-    -webkit-animation-iteration-count: 1;
-
-    -ms-animation: flash-lightgray 0.75s ease-out;
-    -ms-animation-iteration-count: 1;
-}
-@-webkit-keyframes flash-lightgray {
-    0% { background-color: none; }
-    50% { background-color: lightgray; }
-    100% { background-color: none; }
-}
-@-moz-keyframes flash-lightgray {
-    0% { background-color: none; }
-    50% { background-color: lightgray; }
-    100% { background-color: none; }
-}
-@-ms-keyframes flash-lightgray{
-    0% { background-color: none; }
-    50% { background-color: lightgray; }
-    100% { background-color: none; }
-}
+@include flash(flash-red, red);
+@include flash(flash-lightblue, lightblue, 1.25s, lightblue);
+@include flash(flash-lightred, lightcoral, 1.25s, lightcoral);
+@include flash(flash-green, green);
+@include flash(flash-lightgreen, lightgreen);
+@include flash(flash-lightgray, flash-lightgray, 0.75s);
 
 ul.final-reveal {
     li.correct-guess {
@@ -453,33 +374,4 @@ ul.final-reveal {
     li.incorrect-guess {
         background-color: lightgray;
     }
-}
-
-.clock-10-second-mark {
-    background-color: yellow;
-}
-.clock-5-second-mark {
-    -moz-animation: yellow 1s ease-out;
-    -moz-animation-iteration-count: 5;
-
-    -webkit-animation: yellow 1s  ease-out;
-    -webkit-animation-iteration-count: 5;
-
-    -ms-animation: yellow 1s ease-out;
-    -ms-animation-iteration-count: 5;
-}
-@-webkit-keyframes clock-5-second-mark {
-    0% { background-color: none; }
-    50% { background-color: yellow; }
-    100% { background-color: none; }
-}
-@-moz-keyframes clock-5-second-mark {
-    0% { background-color: none; }
-    50% { background-color: yellow; }
-    100% { background-color: none; }
-}
-@-ms-keyframes clock-5-second-mark{
-    0% { background-color: none; }
-    50% { background-color: yellow; }
-    100% { background-color: none; }
 }

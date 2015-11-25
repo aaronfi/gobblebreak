@@ -178,6 +178,11 @@
                     $('#stdout').text('');
                 }
             } else {
+                $('.navbar-fixed-top').addClass('flash-lightred');
+                setTimeout(function () {
+                    $('.navbar-fixed-top').removeClass('flash-lightred');
+                }, 1500);
+
                 $('#stdout').text('Gave up after ' + numShuffleAttempts + ' shuffle attempts.  Try again, or relax your shuffle criteria.');
                 numShuffleAttempts = 0;
             }
@@ -208,11 +213,16 @@
             $('#shuffleButton').show();
             $('#startButton').show();
         }, delay);
-        $('#stdout').text('Final score: ' + game.scoreGuesses());
+        var score = game.scoreGuesses();
+        $('#stdout').text('Final score: ' + score + ' point' + (score !== 1 ? 's' :''));
         showMissedAnswers();
         isGameInProgress = false;
         isPaused = false;
         game.endGame();
+        $('.navbar-fixed-top').addClass('flash-lightblue');
+        setTimeout(function () {
+            $('.navbar-fixed-top').removeClass('flash-lightblue');
+        }, 1500);
 
         // send back our game session event log
         jQuery.ajax({
@@ -831,6 +841,7 @@
             $('#guesses').empty();
             isGameInProgress = true;
             game.startGame();
+            $('#stdout').text('');
             $('#shuffleButton').hide();
             $('#startButton').hide();
             $('#pauseButton').show();
@@ -942,85 +953,5 @@
             }
         );
 
-    //
-    // marquee welcoming text
-    //
-
-    var e;
-    $(window).load(function() {
-        var t, n, i, p, r, o, s;
-        r = $("#subheading");
-        if (r.length > 0) {
-            e = $('<span class="jqconsole-cursor user-color user_0"></span>');
-            t = $('<span class="jqconsole-cursor user-color user_1"></span>');
-            o = function(e, t, n) {
-                var i;
-                if (0 !== t.length) {
-                    e.text(e.text() + t.charAt(0));
-                    i = 40 + 40 * Math.random();  // x == min delay in ms;  y == random number weighting offset
-                    return setTimeout(function() {
-                        return o(e, t.slice(1), n);
-                    }, i);
-                }
-                n && n();
-            };
-            p = function() {
-                var currSpan = e.parent().find('span[class="text"]:not(:last)').last();
-
-                if (currSpan.length > 0) {
-                    if (currSpan.text().length === 0) {
-                        currSpan.remove();
-                    } else {
-                        currSpan.text(currSpan.text().slice(0, -1));
-                    }
-
-                    i = 15 + 5 * Math.random();  // x == min delay in ms;  y == random number weighting offset
-                    return setTimeout(function() {
-                        return p();
-                    }, i);
-                }
-            };
-            s = function (e, t, n) {
-                if (0 !== t.length) {
-                    return o(e, t[0], function() {
-                        var i = $('<span class="text" id="stdout" />').insertAfter(e);
-                        return s(i, t.slice(1), n);
-                    });
-                }
-                n && n();
-                return void 0;
-            };
-
-            n = $('<span class="text" />');
-            i = ["Fancy a ", "game,  you turkey?"];
-
-            r.append(n).append(e);
-            $(".jqconsole-cursor").fadeIn();
-
-            return setTimeout(function() {
-                return s(n, i, function () {
-                    return setTimeout(function () {
-                        var n = r.children().first();
-
-                        t.insertAfter(n);
-                        return setTimeout(function () {
-                            return o(n, " most lexical ", function () {
-                                return setTimeout(function () {
-                                    t.detach();
-                                    return setTimeout(function () {
-                                        $(".jqconsole-cursor").fadeIn();
-                                        return setTimeout(function () {
-                                            p();
-                                        }, 4000);
-                                    }, 300);
-                                }, 100);
-                            });
-                        }, 100);
-                    }, 400);
-                });
-            }, 1100);
-        }
-
-        $(window).focus();
-    });
+    $(window).focus();
 </script>

@@ -88,6 +88,7 @@ class CreateInitialSchemas < ActiveRecord::Migration
 
     create_table :game_sessions do |t|
       t.references :user, index: true
+      t.string :session_id
       t.text :game_url
       t.text :event_log
 

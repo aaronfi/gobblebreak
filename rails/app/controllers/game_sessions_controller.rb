@@ -5,7 +5,8 @@ class GameSessionsController < ApplicationController
 
     def create
         @game_session = GameSession.new(game_session_params)
-        @game_session.user = current_user  #TODO this isn't actually working, because Idon't have anonymous users
+        @game_session.session_id = session.id
+        @game_session.user = current_user if current_user
         @game_session.save
 
         render :nothing => true
@@ -14,6 +15,17 @@ class GameSessionsController < ApplicationController
     private
 
     def game_session_params
-        params.require(:game_session).permit!   #TODO dangeorus, but this fucking thing is fighting me, won't acknowledge event_log because (???) it's a nested object?
+        params.require(:game_session).permit(
+            [
+                :game_url,
+                {
+                    event_log: {
+                        _events: [ :timer, :delta, :event ]
+                    },
+                },
+                :_lastTimerSnapshot,
+                :size
+            ]
+        );
     end
 end
