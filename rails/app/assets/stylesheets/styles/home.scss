@@ -121,10 +121,6 @@ a.dropdown-toggle {
     align-items:center;
 }
 
-.alert {
-    margin-top: $navbar-height;
-}
-
 .dropdown-menu {
     left: auto;
     right: 0;
@@ -345,4 +341,9 @@ ul.nav li:hover > .dropdown-menu {
     .user_1 {
         background: #1f77b4
     }
+}
+
+.sign-in {
+    margin-top: rem-calc(90);
+    text-align: center;
 }

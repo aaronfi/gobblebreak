@@ -53,15 +53,6 @@
                                     </span>
                                 </span>
                             <% end %>
-
-                            <div class="dropdown-divider"></div>
-
-                            <%= form_for('user', url: user_session_path, html: { class: 'dropdown-item sign-in-with-email' }) do |f| %>
-                                <%= f.email_field :email, autofocus: true, placeholder: 'Email Address' %>
-                                <%= f.password_field :password, placeholder: 'Password' %>
-
-                                <%= f.submit "Log in" %>
-                            <% end %>
                         <% end %>
                     </div>
                 </li>

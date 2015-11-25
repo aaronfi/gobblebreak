@@ -10,8 +10,6 @@
 #  created_at :datetime
 #  updated_at :datetime
 #
-
-
 class GameSession < ActiveRecord::Base
     belongs_to :user
 end

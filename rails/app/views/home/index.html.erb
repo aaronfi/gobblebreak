@@ -94,6 +94,12 @@
 </div>
 
 <script>
+    // handle broken Facebook oauth redirection mangling:  http://stackoverflow.com/a/7297873/39529
+    if (window.location.hash &&
+        (window.location.hash === '#_=_' || window.location.hash.indexOf('NaN') !== -1)) {
+        window.location.hash = '';
+    }
+
     var game = new Game({ htmlAnchor: window.location.hash });
 
     //

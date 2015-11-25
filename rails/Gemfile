@@ -24,7 +24,6 @@ end
 # per https://devcenter.heroku.com/articles/getting-started-with-rails4
 
 gem 'devise'
-
 gem 'omniauth'
 gem 'omniauth-facebook'
 gem 'omniauth-google-oauth2'

@@ -266,10 +266,14 @@ Devise.setup do |config|
          scope: 'email, profile',
          image_aspect_ratio: 'square',
          image_Size: 50,
-         access_type: 'online'   # Means we don't want to receive a refresh token.  This means that when a token that
-                                 # was given for us by Google expires, we won’t be able to refresh it (using this special
-                                 # refresh token) so the user will have to log in once again.
-
+         access_type: 'online',   # Means we don't want to receive a refresh token.  This means that when a token that
+                                  # was given for us by Google expires, we won’t be able to refresh it (using this special
+                                  # refresh token) so the user will have to log in once again.
+         client_options: {
+             :ssl => {
+                 :verify => !Rails.env.development?
+             }
+         }
      }  # TODO this should be secret... put in app_passcodes.rb then rename that file
 
     ## Facebook "Prod" account:  https://developers.facebook.com/apps/992314134161458/dashboard/
@@ -279,6 +283,7 @@ Devise.setup do |config|
     ## Facebook "Test" account:  https://developers.facebook.com/apps/992314620828076/dashboard/
     config.omniauth :facebook, '992314620828076', '974e7c3bfbf48298ce19a5550b7c5dde',
         scope: 'email, public_profile', info_fields: 'name, email, gender'
+
 
     # TODO this should be secret... put in app_passcodes.rb then rename that file
 
