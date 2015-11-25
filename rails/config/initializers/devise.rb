@@ -262,7 +262,7 @@ Devise.setup do |config|
 
     # Add your ID and secret here
     # ID first, secret second
-    config.omniauth :google_oauth2, "632648845303-43gdsh9a8a47elpto7mhh5end71vuurg.apps.googleusercontent.com", "Xogls5TDrJzI57DH9PcNPw9c", {
+    config.omniauth :google_oauth2, ENV['GOOGLE_OAUTH_ACCOUNT'], ENV['GOOGLE_OAUTH_PASSWORD'], {
          scope: 'email, profile',
          image_aspect_ratio: 'square',
          image_Size: 50,
@@ -274,17 +274,15 @@ Devise.setup do |config|
                  :verify => !Rails.env.development?  # wasn't working from my laptop for some SSL cert issue...
              }
          }
-     }  # TODO this should be secret... put in app_passcodes.rb then rename that file
+     }
 
-    ## Facebook "Prod" account:  https://developers.facebook.com/apps/992314134161458/dashboard/
-    #config.omniauth :facebook, '992314134161458', '66717aa2ff34bcc14c0ac3357e798ab2', {
-    #}
-
-    ## Facebook "Test" account:  https://developers.facebook.com/apps/992314620828076/dashboard/
-    config.omniauth :facebook, '992314620828076', '974e7c3bfbf48298ce19a5550b7c5dde',
-        scope: 'email, public_profile', info_fields: 'name, email, gender'
-
-
-    # TODO this should be secret... put in app_passcodes.rb then rename that file
-
+    if Rails.env.production?
+        # Facebook "Prod" account:  https://developers.facebook.com/apps/992314134161458/dashboard/
+        config.omniauth :facebook, ENV['FACEBOOK_OAUTH_PROD_ACCOUNT'], ENV['FACEBOOK_OAUTH_PROD_PASSWORD'],
+            scope: 'email, public_profile', info_fields: 'name, email, gender'
+    else
+        # Facebook "Test" account:  https://developers.facebook.com/apps/992314620828076/dashboard/
+        config.omniauth :facebook, ENV['FACEBOOK_OAUTH_DEV_ACCOUNT'], ENV['FACEBOOK_OAUTH_DEV_PASSWORD'],
+            scope: 'email, public_profile', info_fields: 'name, email, gender'
+    end
 end
