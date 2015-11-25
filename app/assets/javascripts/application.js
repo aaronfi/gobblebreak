@@ -15,8 +15,9 @@
 //= require jquery-ui/draggable
 //= require jquery-ui/position
 //= require vendor/jqconsole.min
-// You generate this file by running "webpack" in your ./gobble directory. TODO see if you can get rails to automatically do this as part of "rails server"
+// You generate this file by running "webpack" in your ./gobble directory.
 //= require generated/gobble-bundle
 //= require vendor/tether.min
 //= require vendor/bootstrap
 //= require vendor/bootstrap-slider
+//= require main
