@@ -51,6 +51,7 @@ class User < ActiveRecord::Base
           user.provider = access_token.provider
           user.uid = access_token.uid
 
+          user.skip_confirmation!
           user.save!
       end
   end
