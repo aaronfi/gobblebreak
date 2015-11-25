@@ -6,3 +6,4 @@ load(app_passcodes) if File.exists?(app_passcodes)
 
 # Initialize the rails application.
 GobbleBreak::Application.initialize!
+
