@@ -4,6 +4,7 @@ $(window).load(function() {
     if (window.location.hash &&
         (window.location.hash === '#_=_' || window.location.hash.indexOf('NaN') !== -1)) {
         window.location.hash = '';
+        $('meta[property="og:url"]').prop('content', window.location.href);
     }
 
     var game = new Game({ htmlAnchor: window.location.hash });
@@ -56,6 +57,7 @@ $(window).load(function() {
         $('#resizable').css('width', '');
 
         window.location.hash = game.toHtmlAnchor();
+        $('meta[property="og:url"]').prop('content', window.location.href + window.location.hash);
     };
     var centerBoard = function() {
         $('#resizable').position({
@@ -69,6 +71,7 @@ $(window).load(function() {
         drawBoard();
         swipeHandler();
         window.location.hash = game.toHtmlAnchor();
+        $('meta[property="og:url"]').prop('content', window.location.href + window.location.hash);
     };
     var numShuffleAttempts = 0;
     var onShuffleBoardCallback = function() {
@@ -110,6 +113,7 @@ $(window).load(function() {
         game.minWordLength = Number(minlength);
         refreshBoard();
         window.location.hash = game.toHtmlAnchor();
+        $('meta[property="og:url"]').prop('content', window.location.href + window.location.hash);
     };
 
     var endGame = function(delay) {
@@ -434,6 +438,7 @@ $(window).load(function() {
             var max = $('#maxwords').val();
             game.maxWords = max === 'any' ? 0 : Number(max);
             window.location.hash = game.toHtmlAnchor();
+            $('meta[property="og:url"]').prop('content', window.location.href + window.location.hash);
         });
 
     $('#minwords').change(function() {
@@ -452,6 +457,7 @@ $(window).load(function() {
             var max = $('#maxwords').val();
             game.maxWords = max === 'any' ? 0 : Number(max);
             window.location.hash = game.toHtmlAnchor();
+            $('meta[property="og:url"]').prop('content', window.location.href + window.location.hash);
         }
     });
     $('#maxwords').change(function() {
@@ -472,6 +478,7 @@ $(window).load(function() {
             var max = $('#maxwords').val();
             game.maxWords = max === 'any' ? 0 : Number(max);
             window.location.hash = game.toHtmlAnchor();
+            $('meta[property="og:url"]').prop('content', window.location.href + window.location.hash);
         }
     });
     var decr_min = function() {
@@ -683,6 +690,7 @@ $(window).load(function() {
         game.clockSeconds = Number( parseTimer() );
         $('#timer').val( parseClockSecondsToDisplay() );
         window.location.hash = game.toHtmlAnchor();
+        $('meta[property="og:url"]').prop('content', window.location.href + window.location.hash);
     });
 
     //
@@ -808,6 +816,7 @@ $(window).load(function() {
             $('#board').css({ 'border-color': 'transparent' });
             $('.resizable-arrow i').css({ 'color': 'white' });
             window.location.hash = game.toHtmlAnchor();
+            $('meta[property="og:url"]').prop('content', window.location.href + window.location.hash);
         },
         aspectRatio: true,
         handles: "nw, se"

@@ -65,6 +65,12 @@ Breadcrumbs replace the URL with a Breadcrumb, a list of links indicating a hier
         <meta name="google-signin-client_id" content="gobble-break.apps.googleusercontent.com">
         <meta name="google-signin-scope" content="profile email">
 
+        <meta property="og:url"           content="http://www.gobblebreak.com/" />
+        <meta property="og:type"          content="website" />
+        <meta property="og:title"         content="Gobble Break" />
+        <meta property="og:description"   content="A classic word search game, which you can customize like never before." />
+        <meta property="og:image"         content="http://www.gobblebreak.com/assets/turkey.png" />
+
         <title><%= content_for?(:title) ? yield(:title) : "Gobble Break" %></title>
 
         <%= csrf_meta_tags %>
@@ -77,7 +83,6 @@ Breadcrumbs replace the URL with a Breadcrumb, a list of links indicating a hier
                     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
             ga('create', 'UA-70658609-1', 'auto');
             ga('send', 'pageview');
         </script>
