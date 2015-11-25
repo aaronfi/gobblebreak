@@ -271,7 +271,7 @@ Devise.setup do |config|
                                   # refresh token) so the user will have to log in once again.
          client_options: {
              :ssl => {
-                 :verify => !Rails.env.development?
+                 :verify => !Rails.env.development?  # wasn't working from my laptop for some SSL cert issue...
              }
          }
      }  # TODO this should be secret... put in app_passcodes.rb then rename that file
