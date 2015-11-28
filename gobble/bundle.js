@@ -4,10 +4,11 @@ var dict = require('./src/dictionary.js');
 window.Game = require('./src/gobble.js');
 window.Dictionary = new dict();
 
-// TODO consider user of objectAssign npm module / polyfill
 //
 // polyfill, from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
 // non-ES6 browsers won't have Object.assign defined
+// TODO consider user of objectAssign npm module / polyfill
+//
 if (!Object.assign) {
   Object.defineProperty(Object, 'assign', {
     enumerable: false,

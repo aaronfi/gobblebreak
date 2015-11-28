@@ -20,4 +20,5 @@
 //= require vendor/tether.min
 //= require vendor/bootstrap
 //= require vendor/bootstrap-slider
+//= require vendor/es6-collections-polyfill-1.0.1.min
 //= require main
