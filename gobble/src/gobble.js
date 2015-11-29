@@ -401,7 +401,11 @@ class Gobble {
 			});
 
 			if (this.words.size > 0) {
-				answers[this.minWordLength] = [...this.words].sort();
+                // NOTE 2015.11.29:  [...this.words].sort() worked in desktop chrome, but not mobile Safari.  The ... notation was silently failing.
+                // And `this.words._keys` would fail in desktop chrome.  So we try both.
+                let tempArray = this.words._keys || [...this.words];
+                // /NOTE
+				answers[this.minWordLength] = tempArray.sort();
                 this.minWordLength++;
 			} else {
 				this.minWordLength = originalMinWordLength;

@@ -1,5 +1,6 @@
-
 $(window).load(function() {
+    FastClick.attach(document.body);
+
     // handle broken Facebook oauth redirection mangling:  http://stackoverflow.com/a/7297873/39529
     if (window.location.hash &&
         (window.location.hash === '#_=_' || window.location.hash.indexOf('NaN') !== -1)) {
@@ -93,11 +94,6 @@ $(window).load(function() {
                     $('#stdout').text('');
                 }
             } else {
-                $('.navbar-fixed-top').addClass('flash-lightred');
-                setTimeout(function () {
-                    $('.navbar-fixed-top').removeClass('flash-lightred');
-                }, 1500);
-
                 $('#stdout').text('Gave up after ' + numShuffleAttempts + ' shuffle attempts.  Try again, or relax your shuffle criteria.');
                 numShuffleAttempts = 0;
             }
@@ -183,95 +179,109 @@ $(window).load(function() {
             var isMouseDown = false;
             var prevId;
 
-            $('.outer-square')
-                .mousedown(function() {
-                    if (isPaused) return;
-                    isMouseDown = true;
-                    if (!isGameInProgress) {
-                        $('#startButton').click();  // auto-start the game upon first swiped word
-                    }
-                    $(this).addClass('highlighted-starting-letter visited');
-                    var id = $(this).find('span').data('squareId');
-                    word.push(id);
-                    prevId = id;
+            // mousedown === touchstart
+            // mousemove === touchmove
+            // mouseup === touchend
 
-                    $('#stdout').text(game.letters[id] === '.' ? 'qu' : game.letters[id]);
-                    return false;  // prevent text selection
-                });
+            $(document).on('touchmove', function(e) {
+                e.preventDefault();
+            });
 
-            $('.square').mouseover(function(e) {
-                    if (isPaused) return;
-                    var id = $(this).find('span').data('squareId');
-                    if (isMouseDown) {
-                        if ($(this).parent().hasClass('visited')) {
-                            if (id === word[word.length - 2]) {  // undo move
-                                var mostRecentMove = word.pop();
-                                var mostRecentMoveId = '#sq' + mostRecentMove;
-                                $(mostRecentMoveId).parent().parent().parent().removeClass('visited highlighted');
-                                $('#stdout').text( $('#stdout').text().slice(0, -1) );
-                                prevId = word[word.length - 1];
-                            }
-                        } else if (game.board[prevId].indexOf(id) !== -1) {
-                            $(this).parent().addClass('highlighted visited');
-                            word.push(id);
-                            prevId = id;
-                            $('#stdout').append( game.letters[id] );
+            $('.outer-square').bind('touchmove', function(event) {
+                var myLocation = event.originalEvent.changedTouches[0];
+                var realTarget = document.elementFromPoint(myLocation.clientX, myLocation.clientY);
+                $(realTarget).trigger('mousemove');
+                return false;  // prevent text selection
+            });
+
+            $('.outer-square').bind('touchstart mousedown', function(event) {
+                if (isPaused) return;
+                isMouseDown = true;
+                if (!isGameInProgress) {
+                    $('#startButton').click();  // auto-start the game upon first swiped word
+                }
+                $(this).addClass('highlighted-starting-letter visited');
+                var id = $(this).find('span').data('squareId');
+                word.push(id);
+                prevId = id;
+
+                $('#stdout').text(game.letters[id] === '.' ? 'qu' : game.letters[id]);
+                return false;  // prevent text selection
+            });
+
+            $('.square').bind('mousemove', function(event) {
+                if (isPaused) return;
+                var id = $(this).find('span').data('squareId');
+                if (isMouseDown) {
+                    if ($(this).parent().hasClass('visited')) {
+                        if (id === word[word.length - 2]) {  // undo move
+                            var mostRecentMove = word.pop();
+                            var mostRecentMoveId = '#sq' + mostRecentMove;
+                            $(mostRecentMoveId).parent().parent().parent().removeClass('visited highlighted');
+
+                            var offset = $('#stdout').text().slice(-2) === 'qu' ? -2 : -1;
+                            $('#stdout').text($('#stdout').text().slice(0, offset));
+                            prevId = word[word.length - 1];
                         }
+                    } else if (game.board[prevId].indexOf(id) !== -1) {
+                        $(this).parent().addClass('highlighted visited');
+                        word.push(id);
+                        prevId = id;
+                        $('#stdout').append(game.letters[id] === '.' ? 'qu' : game.letters[id]);
                     }
-                })
-                .bind("selectstart", function() {
-                    return false;
-                });
+                }
+            }).bind("selectstart", function() {
+                return false;
+            });
 
-            $(document)
-                .mouseup(function() {
-                    if (isPaused) return;
-                    isMouseDown = false;
+            $(document).bind('mouseup touchend', function() {
+                if (isPaused) return;
+                isMouseDown = false;
 
-                    if (isGameInProgress) {  // make sure a word-drag that started before the timer expired, but didn't conclude until after the timer expired, is not alloewd in as a socre
-                        if (word.length >= game.minWordLength) {
-                            var results = game.submitWord(word);
-                            var formedWord = results[0];
-                            var resultCode = results[1];
+                if (isGameInProgress) {  // make sure a word-drag that started before the timer expired, but didn't conclude until after the timer expired, is not alloewd in as a socre
+                    if (word.length >= game.minWordLength) {
+                        var results = game.submitWord(word);
+                        var formedWord = results[0];
+                        var resultCode = results[1];
 
-                            if (formedWord && resultCode !== ':duplicate' && resultCode !== ':impossible') {
-                                var newGuess = $('#newGuess').clone(false);
-                                newGuess.removeAttr('id');
+                        if (formedWord && resultCode !== ':duplicate' && resultCode !== ':impossible') {
+                            var newGuess = $('#newGuess').clone(false);
+                            newGuess.removeAttr('id');
 
-                                if (resultCode === ':correct') {
-                                    newGuess.addClass('correct-guess').find('span:first-child').text(game.scoreGuess(formedWord));
-                                    newGuess.addClass('flash-lightgreen');
+                            if (resultCode === ':correct') {
+                                newGuess.addClass('correct-guess').find('span:first-child').text(game.scoreGuess(formedWord));
+                                newGuess.addClass('flash-lightgreen');
+                                newGuess.removeClass('hidden');
+                            } else {
+                                if ($('#showIncorrectGuesses').prop('checked')) {
                                     newGuess.removeClass('hidden');
-                                } else {
-                                    if ($('#showIncorrectGuesses').prop('checked')) {
-                                        newGuess.removeClass('hidden');
-                                        newGuess.addClass('flash-lightgray');
-                                    };
-                                    newGuess.addClass('incorrect-guess');
-                                }
-                                newGuess.find('span:last-child').text(formedWord);
-                                newGuess.prependTo('#guesses');
-
-                                setTimeout(function () {
-                                    newGuess.removeClass('flash-lightgreen flash-lightgray');
-                                }, 3000);
+                                    newGuess.addClass('flash-lightgray');
+                                };
+                                newGuess.addClass('incorrect-guess');
                             }
+                            newGuess.find('span:last-child').text(formedWord);
+                            newGuess.prependTo('#guesses');
 
-                            var numAnswers = game.answers[game.minWordLength] ? game.answers[game.minWordLength].length : 0;
-                            wordCompletionSlider.slider('setValue', [game.correctGuesses.size, numAnswers]);
-                        } else if (word.length > 1) {
-                            $('#minwordlength').addClass('flash-red');
-                            $('#minwordlength').prev().addClass('flash-red');
                             setTimeout(function () {
-                                $('#minwordlength').removeClass('flash-red');
-                                $('#minwordlength').prev().removeClass('flash-red');
-                            }, 750);
+                                newGuess.removeClass('flash-lightgreen flash-lightgray');
+                            }, 3000);
                         }
-                    }
 
-                    $('.outer-square').removeClass('highlighted highlighted-starting-letter visited');
-                    word = [];
-                });
+                        var numAnswers = game.answers[game.minWordLength] ? game.answers[game.minWordLength].length : 0;
+                        wordCompletionSlider.slider('setValue', [game.correctGuesses.size, numAnswers]);
+                    } else if (word.length > 1) {
+                        $('#minwordlength').addClass('flash-red');
+                        $('#minwordlength').prev().addClass('flash-red');
+                        setTimeout(function () {
+                            $('#minwordlength').removeClass('flash-red');
+                            $('#minwordlength').prev().removeClass('flash-red');
+                        }, 750);
+                    }
+                }
+
+                $('.outer-square').removeClass('highlighted highlighted-starting-letter visited');
+                word = [];
+            });
         });
     };
 
@@ -557,12 +567,12 @@ $(window).load(function() {
         var minlength = Math.max(2, parseInt($('#minwordlength').val(), 10) - 1);
         $('#minwordlength').val(minlength);
         minWordLengthCallback();
-    }
+    };
     var incr_minlength = function() {
         var minlength = Math.max(2, parseInt($('#minwordlength').val(), 10) + 1);
         $('#minwordlength').val(minlength);
         minWordLengthCallback();
-    }
+    };
     $('#minwordlength').bind('keydown', function(e) {
         switch (e.keyCode) {
             case 13:  // enter key
@@ -655,9 +665,9 @@ $(window).load(function() {
 
     $('#showProgressBar').change(function() {
         if (this.checked) {
-            $('#wordCompletionSlider').css({ 'z-index': '' });
+            $('#wordCompletionSlider').css({ 'visibility': '' });
         } else {
-            $('#wordCompletionSlider').css({ 'z-index': '-10' });
+            $('#wordCompletionSlider').css({ 'visibility': 'hidden' });
         }
     });
 

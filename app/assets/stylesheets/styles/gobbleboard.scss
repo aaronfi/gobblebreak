@@ -1,6 +1,6 @@
 @import 'base/shared';
 
-.col-sm-2 {
+#rightPane {
     .list-group {
         margin-top: rem-calc(75);
         height: rem-calc(495);
@@ -16,7 +16,6 @@
 
             span {
                 line-height: rem-calc(17);
-                vertical-align: middle;
             }
         }
     }
@@ -31,71 +30,83 @@
     display: inline-block;
     white-space: nowrap;
 
+    // suppress on ipad -- jQuery's resizable widget doesn't seem to work well.
+    @media only screen
+    and (min-device-width: 768px)
+    and (max-device-width: 1024px) {
+        left: rem-calc(-100) !important;
+    }
+
+
     .draggable-arrow {
         @include disable-text-selection;
 
         font-size: rem-calc(23);
         color: white;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+
+        // suppress on ipad -- jQuery's draggable doesn't seem to work on mobile
+        @media only screen
+        and (min-device-width: 768px)
+        and (max-device-width: 1024px) {
+            visibility: hidden;
+        }
     }
 
     .top-controls {
         @include disable-text-selection;
 
-        .col-sm-4 {
+        .row {
             display: table;
-            height: rem-calc(52);
-        }
+            width: 100%;
+            padding: 0 0 rem-calc(30) 0;
+            margin-left: rem-calc(30);
 
-        max-width: 600px;
-        padding: 0.5rem;
-        padding: rem-calc(90) 0 0 0;
-        white-space: nowrap;
-        width: 100%;
+            .col-sm-12 {
+                display: table-cell;
+                text-align: center;
 
-        .centerBlock {
-            display: table-cell;
-            margin: 0 auto;
-            padding-left: rem-calc(30);
-            padding-right: rem-calc(30);
+                height: rem-calc(52);
+                padding: rem-calc(90) 0 rem-calc(30) 0;
+                white-space: nowrap;
 
-            vertical-align:middle;
-            text-align:center;
+                .centerBlock {
+                    display: inline-table;
+                    vertical-align: middle;
+                    width: rem-calc(60);
+                    padding: 0 rem-calc(20);
 
-        }
-        .leftBlock {
-            display: table;
-            margin: 0 auto 0 0;
-        }
+                    #timer {
+                        width: rem-calc(60);
+                    }
+                }
 
-        #shuffleButton {
-            padding-left: rem-calc(30);
-            padding-right: rem-calc(30);
+                #startButton {
+                    padding-left: rem-calc(30);
+                    padding-right: rem-calc(30);
+                    width: rem-calc(140);
+                }
+                #shuffleButton {
+                    padding-left: rem-calc(30);
+                    padding-right: rem-calc(30);
+                    width: rem-calc(140);
+                }
+                #endButton {
+                    background-color: darkcyan;
+                    padding-left: rem-calc(30);
+                    padding-right: rem-calc(30);
+                    width: rem-calc(140);
+                    display: none;
+                }
+                #pauseButton {
+                    background-color: darkcyan;
+                    padding-left: rem-calc(30);
+                    padding-right: rem-calc(30);
+                    min-width: rem-calc(140);
+                    display: none;
+                }
+            }
         }
-        #endButton {
-            background-color: darkcyan;
-            padding-left: rem-calc(30);
-            padding-right: rem-calc(30);
-            display: none;
-        }
-
-        #startButton {
-            width: rem-calc(120);
-            padding-left: rem-calc(30);
-            padding-right: rem-calc(30);
-        }
-        #pauseButton {
-            background-color: darkcyan;
-            width: rem-calc(134);
-            padding-left: rem-calc(30);
-            padding-right: rem-calc(30);
-            display: none;
-        }
-
-        #timer {
-            width: rem-calc(60);
-        }
-
     }
 
     .resizable-arrow {
@@ -107,6 +118,13 @@
         display: inline-block;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         margin-left: rem-calc(-32);
+
+        // suppress on ipad -- jQuery's resizable widget doesn't seem to work well.
+        @media only screen
+        and (min-device-width: 768px)
+        and (max-device-width: 1024px) {
+            display: none;
+        }
     }
 
     .board {

@@ -61,8 +61,13 @@ html {
     letter-spacing: rem-calc(1) !important;
 
     // vertically centers our variable height columns in the same row
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
     display: flex;
+
     align-items:center;
+    -webkit-align-items: center;
 
     .navbar-nav {
         a, a:focus {
@@ -96,6 +101,12 @@ ul.nav.navbar-nav {
 
     ul.navbar-right {
         white-space: nowrap;
+
+        @media only screen
+        and (min-device-width: 768px)
+        and (max-device-width: 1024px) {
+            padding-right: rem-calc(30);
+        }
     }
 
     a {
@@ -117,8 +128,14 @@ $navbar-height: rem-calc(66);
 a.dropdown-toggle {
     text-decoration:none;
     height: $navbar-height;
-    display: flex;
     align-items:center;
+    -webkit-align-items: center;
+
+
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
 }
 
 .dropdown-menu {
@@ -292,15 +309,6 @@ ul.nav li:hover > .dropdown-menu {
     background-position: center top;
     background-color: #27ae60;
     background-image: url(../assets/images/backgrounds/centerpiece.jpg);
-}
-
-#leftPane, #rightPane {
-    background-color: transparent;
-    color: white;
-
-    div {
-        margin-bottom: rem-calc(13);
-    }
 }
 
 #subheading {
