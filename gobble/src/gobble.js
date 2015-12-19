@@ -47,6 +47,11 @@ const EventLog = require('./../src/event_log');
 //
 // TODO bug -- scoring system for 6x6 is currently counting 0 point words
 //
+// TODO add multiplayer mode;
+//
+// TODO shuffling strategy: monte carlo -- let your randomizer converge on word range criteria
+//
+//
 class Gobble {
 
     constructor(options = {}) {
@@ -318,7 +323,7 @@ class Gobble {
                 result += `</span></div></div></div>`;
             }
 
-            result += '<div class="clearfix"></div></div>';
+            result += '</div>';
         }
 
         return result;

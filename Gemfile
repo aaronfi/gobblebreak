@@ -21,6 +21,7 @@ group :test, :development do
   	gem 'poltergeist'
 end
 
+
 # per https://devcenter.heroku.com/articles/getting-started-with-rails4
 
 gem 'devise'

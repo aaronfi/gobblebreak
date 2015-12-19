@@ -22,19 +22,39 @@ $(window).load(function() {
         }
         return min + ':' + sec;
     };
-    var drawWordCompletionSlider = function() {
+    var drawWordCompletionProgressBar = function() {
         var timer = setInterval(function() {
-            if (wordCompletionSlider && game.answers[game.minWordLength]) {
+            if (game.answers[game.minWordLength]) {
                 var numAnswers = game.answers[game.minWordLength].length;
-                wordCompletionSlider
-                    .slider('setValue', [game.correctGuesses.size, numAnswers])
-                    .slider('setAttribute', 'max', numAnswers)
-                    .slider('refresh');
+                if (numAnswers > 999) {
+                    var thousands = Math.floor(numAnswers / 1000);
+                    numAnswers = thousands + ',' + (numAnswers - (thousands * 1000));
+                }
+                $('#progressBarRight').text(numAnswers + ' words total').fadeIn();
+
+                var numGuesses = game.correctGuesses.size;
+                var result = numGuesses;
+                if (result > 999) {
+                    var thousands = Math.floor(result / 1000);
+                    result = thousands + ',' + (result - (thousands * 1000));
+                }
+                result += ' word';
+                if (numGuesses !== 1) {
+                    result += 's';
+                }
+                result += ' found, ';
+                var score = game.scoreGuesses();
+                result += score + ' point';
+                if (score !== 1) {
+                    result += 's';
+                }
+
+                $('#progressBarLeft').text(result);
+                $('#progressBar').attr({ value: numGuesses, max: numAnswers });
+
                 clearInterval(timer);
             }
         }, 250);
-
-        $('#wordCompletionSlider').css({ 'height': $('#board').height() - 1.5*parseInt($("#board").css("margin-bottom")) });
     };
     var drawBoard = function() {
         $(".square").css({
@@ -51,11 +71,11 @@ $(window).load(function() {
             'padding': (game.size * 0.2) + 'px'
         });
 
-        drawWordCompletionSlider();
-
+        $('#canvas').width( $('#board').width() - 1);
+        $('#canvas').height( $('#board').height() - 1);
         // for some reason, these two commands are necessary;  otherwise the resize triangle can end up misaligned.
-        $('#resizable').css('height', '');
-        $('#resizable').css('width', '');
+        // $('#resizable').css('height', '');
+        //$('#resizable').css('width', '');
 
         window.location.hash = game.toHtmlAnchor();
         $('meta[property="og:url"]').prop('content', window.location.href + window.location.hash);
@@ -79,7 +99,7 @@ $(window).load(function() {
         numShuffleAttempts++;
 
         if (game.maxWords > 0 || game.minWords > 0) {
-            if (numShuffleAttempts < 25) {
+            if (numShuffleAttempts < 30) {
                 var numAnswers = game.answers[game.minWordLength] ? game.answers[game.minWordLength].length : 0;
 
                 if (numAnswers < game.minWords) {
@@ -169,7 +189,7 @@ $(window).load(function() {
         if (x !== game.x || y !== game.y) {
             game.resize({ x: x, y: y, onShuffleBoardCallback: onShuffleBoardCallback });
             refreshBoard();
-            drawWordCompletionSlider();
+            drawWordCompletionProgressBar();
             resetClock();
         }
         $('#guesses').empty().removeClass('final-reveal');
@@ -268,7 +288,7 @@ $(window).load(function() {
                         }
 
                         var numAnswers = game.answers[game.minWordLength] ? game.answers[game.minWordLength].length : 0;
-                        wordCompletionSlider.slider('setValue', [game.correctGuesses.size, numAnswers]);
+                        drawWordCompletionProgressBar();
                     } else if (word.length > 1) {
                         $('#minwordlength').addClass('flash-red');
                         $('#minwordlength').prev().addClass('flash-red');
@@ -301,6 +321,8 @@ $(window).load(function() {
     $('#maxwords').val(game.maxWords === 0 ? 'any' : game.maxWords);
     $('#minwordlength').val(game.minWordLength);
     $('#timer').val(parseClockSecondsToDisplay());
+    var boardBorderWidth = parseInt($('#board').css('borderLeftWidth'), 10) + 'px';
+    $('#canvas').css({ 'margin-top': boardBorderWidth, 'margin-left': boardBorderWidth });
 
     //
     // snazzy keyboard controls
@@ -625,49 +647,13 @@ $(window).load(function() {
     });
 
     // game progression bar
-    var wordCompletionSlider = $('#wordCompletionSlider').slider({
-        min: 0,
-        max: -1,
-        value: 0,
-        range: true,
-        tooltip: 'always',
-        reversed: true,
-        orientation: 'vertical',
-        step: 1,
-        enabled : false,
-        tooltip_split: true,
-        formatter: function(value) {
-            var result = value;
-            if (result > 999) {
-                var thousands = Math.floor(result / 1000);
-                result = thousands + ',' + (result - (thousands * 1000));
-            }
-            if (game.answers[game.minWordLength]) {
-                result += ' word';
-                if (value !== 1) {
-                    result += 's';
-                }
-                if (value === game.answers[game.minWordLength].length) {
-                    result += ' total';
-                } else {
-                    result += ' found, ';
-                    var score = game.scoreGuesses();
-                    result += score + ' point';
-                    if (score !== 1) {
-                        result += 's';
-                    }
-                }
-            }
-            return result;
-        }
-    });
-    drawWordCompletionSlider();
+    drawWordCompletionProgressBar();
 
     $('#showProgressBar').change(function() {
         if (this.checked) {
-            $('#wordCompletionSlider').css({ 'visibility': '' });
+            $('#progressBarRow').css({ 'visibility': '' });
         } else {
-            $('#wordCompletionSlider').css({ 'visibility': 'hidden' });
+            $('#progressBarRow').css({ 'visibility': 'hidden' });
         }
     });
 
@@ -810,6 +796,7 @@ $(window).load(function() {
     // initialize board resizing
     //
 
+    var canvas = document.getElementById('canvas');
     $('#resizable').resizable({
         start: function(event, ui) {
             $('#board').css({ 'border-color': 'blue' });
@@ -819,8 +806,13 @@ $(window).load(function() {
             $('#board').css({ 'border-color': 'blue' });
             $('.resizable-arrow i').css({ 'color': 'blue' });
 
+            $('.board-column').css({ 'height': $('#board').height(), 'width': $('#board').width() });
+
             game.size = Math.round(Math.min(ui.size.height, ui.size.width) / (1.7 * Math.max(game.x, game.y)));
             drawBoard();
+
+            //canvas.width = $('#resizable').width();
+            //canvas.height = $('#resizable').height();
         },
         stop: function(event, ui) {
             $('#board').css({ 'border-color': 'transparent' });
@@ -883,6 +875,8 @@ $(window).load(function() {
                 $(this).css({ 'color': 'white' });
             }
         );
+
+
 
     $(window).focus();
 });

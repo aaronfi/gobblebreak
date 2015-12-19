@@ -1,5 +1,21 @@
 @import 'base/shared';
 
+#board-container {
+    position: relative;
+
+    & #canvas, #board {
+        position: absolute;
+    }
+}
+
+canvas {
+    border: 1px solid black;
+    display: block;  /* To remove the scrollbars */
+    z-index: 10;
+    pointer-events: none;
+//    background: #eee;
+}
+
 #rightPane {
     .list-group {
         margin-top: rem-calc(75);
@@ -37,7 +53,6 @@
         left: rem-calc(-100) !important;
     }
 
-
     .draggable-arrow {
         @include disable-text-selection;
 
@@ -53,60 +68,105 @@
         }
     }
 
+    .more-top-controls {
+        @include disable-text-selection;
+
+        display: table;
+        width: 100%;
+        padding: 0;
+
+        .col-sm-12 {
+            text-align: center;
+            padding: 0;
+            white-space: nowrap;
+        }
+
+    }
+
     .top-controls {
         @include disable-text-selection;
 
-        .row {
-            display: table;
-            width: 100%;
-            padding: 0 0 rem-calc(30) 0;
-            margin-left: rem-calc(30);
+        display: table;
+        width: 100%;
+        padding: 0 0 rem-calc(30) 0;
 
-            .col-sm-12 {
-                display: table-cell;
-                text-align: center;
+        .col-sm-12 {
+            display: table-cell;
+            text-align: center;
 
-                height: rem-calc(52);
-                padding: rem-calc(90) 0 rem-calc(30) 0;
-                white-space: nowrap;
+            height: rem-calc(52);
+            padding: rem-calc(90) 0 rem-calc(30) 0;
+            white-space: nowrap;
 
-                .centerBlock {
-                    display: inline-table;
-                    vertical-align: middle;
-                    width: rem-calc(60);
-                    padding: 0 rem-calc(20);
+            .centerBlock {
+                display: inline-table;
+                vertical-align: middle;
+                width: rem-calc(60);
+                padding: 0 rem-calc(20);
 
-                    #timer {
-                        width: rem-calc(60);
-                    }
-                }
-
-                #startButton {
-                    padding-left: rem-calc(30);
-                    padding-right: rem-calc(30);
-                    width: rem-calc(140);
-                }
-                #shuffleButton {
-                    padding-left: rem-calc(30);
-                    padding-right: rem-calc(30);
-                    width: rem-calc(140);
-                }
-                #endButton {
-                    background-color: darkcyan;
-                    padding-left: rem-calc(30);
-                    padding-right: rem-calc(30);
-                    width: rem-calc(140);
-                    display: none;
-                }
-                #pauseButton {
-                    background-color: darkcyan;
-                    padding-left: rem-calc(30);
-                    padding-right: rem-calc(30);
-                    min-width: rem-calc(140);
-                    display: none;
+                #timer {
+                    width: rem-calc(66);
                 }
             }
+
+            #startButton {
+                padding-left: rem-calc(30);
+                padding-right: rem-calc(30);
+                width: rem-calc(140);
+            }
+            #shuffleButton {
+                padding-left: rem-calc(30);
+                padding-right: rem-calc(30);
+                width: rem-calc(140);
+            }
+            #endButton {
+                background-color: darkcyan;
+                padding-left: rem-calc(30);
+                padding-right: rem-calc(30);
+                width: rem-calc(140);
+                display: none;
+            }
+            #pauseButton {
+                background-color: darkcyan;
+                padding-left: rem-calc(30);
+                padding-right: rem-calc(30);
+                min-width: rem-calc(140);
+                display: none;
+            }
         }
+
+    }
+
+    .progress-column {
+        height: rem-calc(20);
+    }
+    .progress {
+        padding-top: rem-calc(10);
+        padding-bottom: 0;
+        min-width: rem-calc(400);
+        max-width: rem-calc(400);
+        margin: rem-calc(0 25);
+        display: inline-block;
+    }
+    #progressBarLeft, #progressBarRight {
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        color: white;
+        padding-bottom: rem-calc(10);
+        min-width: rem-calc(200);
+    }
+    #progressBarLeft {
+        display: inline-block;
+        padding-left: rem-calc(10);
+        text-align: left;
+    }
+    #progressBarRight {
+        display: inline-block;
+        padding-right: rem-calc(10);
+        text-align: right;
+    }
+
+    .board-column {
+        padding: 0;
     }
 
     .resizable-arrow {
@@ -117,7 +177,6 @@
         background-image: none;
         display: inline-block;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-        margin-left: rem-calc(-32);
 
         // suppress on ipad -- jQuery's resizable widget doesn't seem to work well.
         @media only screen
@@ -127,9 +186,11 @@
         }
     }
 
+    .board-row {
+        display: flex;
+    }
+
     .board {
-        margin-left: rem-calc(26);
-        margin-bottom: rem-calc(23);
         border: 1mm solid transparent;
         display: inline-block;
 
@@ -222,40 +283,8 @@
             }
         }
     }
-
-    .word-completion-slider {
-        display: inline-block;
-        vertical-align: top;
-        margin-top: rem-calc(20);
-
-        .tooltip {
-            z-index: 0;
-        }
-
-        .slider {
-            padding-left: rem-calc(35);
-            cursor: auto;
-        }
-
-        .slider-selection {
-            background: #BABABA;
-            cursor: auto;
-        }
-
-        .slider-handle {
-            cursor: auto;
-
-            &.min-slider-handle {
-                background: green;
-            }
-        }
-
-        .slider-track-high {
-            background-color: green;
-            cursor: auto;
-        }
-    }
 }
+
 
 .inputs {
     display: inline-block;
