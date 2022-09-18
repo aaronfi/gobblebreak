@@ -1,13 +1,6 @@
 $(window).load(function() {
     FastClick.attach(document.body);
 
-    // handle broken Facebook oauth redirection mangling:  http://stackoverflow.com/a/7297873/39529
-    if (window.location.hash &&
-        (window.location.hash === '#_=_' || window.location.hash.indexOf('NaN') !== -1)) {
-        window.location.hash = '';
-        $('meta[property="og:url"]').prop('content', window.location.href);
-    }
-
     var game = new Game({ htmlAnchor: window.location.hash });
 
     //
@@ -155,20 +148,6 @@ $(window).load(function() {
         setTimeout(function () {
             $('.navbar-fixed-top').removeClass('flash-lightblue');
         }, 1500);
-
-        // send back our game session event log
-        jQuery.ajax({
-            type: 'POST',
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
-            },
-            url: '/game_sessions',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify({ 'game_url': game.toHtmlAnchor(), 'event_log': game.eventLog }),
-            success: function(json) { }
-        });
-
     };
     var resetClock = function() {
         isGameInProgress = false;
@@ -355,7 +334,7 @@ $(window).load(function() {
                 }
                 e.stopPropagation();
                 break;
-            case 32:  // space bar
+            case 32:  // spacebar
                 e.preventDefault();
                 shuffleBoard();
                 e.stopPropagation();
@@ -810,9 +789,6 @@ $(window).load(function() {
 
             game.size = Math.round(Math.min(ui.size.height, ui.size.width) / (1.7 * Math.max(game.x, game.y)));
             drawBoard();
-
-            //canvas.width = $('#resizable').width();
-            //canvas.height = $('#resizable').height();
         },
         stop: function(event, ui) {
             $('#board').css({ 'border-color': 'transparent' });
